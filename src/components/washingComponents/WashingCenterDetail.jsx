@@ -490,17 +490,6 @@ const WashingCenterDetail = ({ center, onClose, onBookNow }) => {
                 
                 <div className={`rounded-lg p-4 sm:p-6 border ${theme === 'light' ? 'bg-white border-gray-200' : 'bg-gray-800 border-gray-700'}`}>
                   <div className="flex items-start space-x-3 sm:space-x-4">
-                    <FontAwesomeIcon icon={faPhone} className="text-red-500 w-4 h-4 sm:w-5 sm:h-5 mt-1 flex-shrink-0" />
-                    <div className="min-w-0 flex-1">
-                      <p className={`font-semibold mb-1 text-sm sm:text-base ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>Phone</p>
-                      <p className={`text-xs sm:text-sm break-all ${theme === 'light' ? 'text-gray-700' : 'text-gray-300'}`}>{center.phone}</p>
-                      <p className={`text-xs mt-1 ${theme === 'light' ? 'text-gray-500' : 'text-gray-500'}`}>Available 24/7 for bookings</p>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className={`rounded-lg p-4 sm:p-6 border ${theme === 'light' ? 'bg-white border-gray-200' : 'bg-gray-800 border-gray-700'}`}>
-                  <div className="flex items-start space-x-3 sm:space-x-4">
                     <FontAwesomeIcon icon={faClock} className="text-red-500 w-4 h-4 sm:w-5 sm:h-5 mt-1 flex-shrink-0" />
                     <div className="min-w-0 flex-1">
                       <p className={`font-semibold mb-1 text-sm sm:text-base ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>Operating Hours</p>

@@ -1,5 +1,24 @@
 /* Custom styles for BannerCarousel navigation arrows */
 
+/* Ensure Swiper container and slides have proper dimensions */
+.swiper {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.swiper-wrapper {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.swiper-slide {
+  width: 100% !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
 /* Small screens (mobile) - Very small arrows */
 .swiper-button-next,
 .swiper-button-prev {
