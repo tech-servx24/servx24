@@ -20,7 +20,7 @@ export const getGaragesByServiceCategory = async (requestData) => {
         sort: requestData.filter?.sort || [],
         ratings: requestData.filter?.ratings || [],
         distence: requestData.filter?.distance || [], // Keep old spelling like old website
-        services: requestData.filter?.services || [],
+        service: requestData.filter?.service || requestData.filter?.services || [], // Backend expects 'service' (singular)
       }
     };
     

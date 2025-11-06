@@ -120,7 +120,7 @@ const ServiceCategories = forwardRef(({ onServiceClick }, ref) => {
       title: "EV Service",
       description: "Electric vehicle services",
       icon: faBolt,
-      available: false,
+      available: true,
       type: 'ev-service'
     },
     {

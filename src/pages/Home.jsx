@@ -19,6 +19,7 @@ import FourWheelerGarages from '../components/garageComponents/FourWheelerGarage
 import SixWheelerGarages from '../components/garageComponents/SixWheelerGarages';
 import GarageDetailPage from '../components/garageComponents/GarageDetailPage';
 import WashingService from '../components/washingComponents/WashingService';
+import EVService from '../components/evComponents/EVService';
 import Footer from '../components/Footer';
 import ScrollToTop from '../components/ScrollToTop';
 import { fetchLandingPageData } from '../services/landingpage';
@@ -47,6 +48,7 @@ const Home = ({ setCurrentPage }) => {
   const [garages, setGarages] = useState([]);
   const [showGarageListing, setShowGarageListing] = useState(false);
   const [showWashingService, setShowWashingService] = useState(false);
+  const [showEVService, setShowEVService] = useState(false);
   const [selectedVehicleType, setSelectedVehicleType] = useState(null);
   const [selectedGarage, setSelectedGarage] = useState(null);
   const [showGarageDetail, setShowGarageDetail] = useState(false);
@@ -72,6 +74,9 @@ const Home = ({ setCurrentPage }) => {
     } else if (returnTo === 'washing-list') {
       console.log('📍 Returning from washing booking flow, showing washing service');
       setShowWashingService(true);
+    } else if (returnTo === 'ev-list') {
+      console.log('📍 Returning from EV booking flow, showing EV service');
+      setShowEVService(true);
     }
   }, []);
 
@@ -182,6 +187,8 @@ const Home = ({ setCurrentPage }) => {
       setSelectedServiceId(1); // Garage service ID
     } else if (serviceType === 'washing-detailing') {
       setShowWashingService(true);
+    } else if (serviceType === 'ev-service') {
+      setShowEVService(true);
     } else {
       // Show coming soon for other services
       alert(`${serviceType} service - Coming Soon!`);
@@ -222,6 +229,7 @@ const Home = ({ setCurrentPage }) => {
   const backToMain = () => {
     setShowGarageListing(false);
     setShowWashingService(false);
+    setShowEVService(false);
     setSelectedVehicleType(null);
     setSelectedServiceId(null);
     // Scroll to top when going back to main page
@@ -247,12 +255,15 @@ const Home = ({ setCurrentPage }) => {
   // Handle login success for garage detail
   const handleLoginSuccess = () => {
     console.log("✅ Login successful, proceeding to booking");
-    if (loginPopupGarageId) {
-      // Login popup from garage card
-      window.location.href = `/booking?garageId=${loginPopupGarageId}&returnTo=garage-list&vehicleType=${selectedVehicleType}`;
-    } else if (loginPopupWashingCenterId) {
+    if (loginPopupWashingCenterId) {
       // Login popup from washing service
       window.location.href = `/washing-booking?washingCenterId=${loginPopupWashingCenterId}&returnTo=washing-list&vehicleType=all`;
+    } else if (loginPopupGarageId && showEVService) {
+      // Login popup from EV service
+      window.location.href = `/booking?garageId=${loginPopupGarageId}&returnTo=ev-list&vehicleType=all`;
+    } else if (loginPopupGarageId) {
+      // Login popup from garage card (regular garage listing)
+      window.location.href = `/booking?garageId=${loginPopupGarageId}&returnTo=garage-list&vehicleType=${selectedVehicleType}`;
     } else if (selectedGarage) {
       // Login popup from garage detail
       closeGarageDetail();
@@ -290,7 +301,7 @@ const Home = ({ setCurrentPage }) => {
 
       {/* Main Content */}
       <main>
-        {!showGarageListing && !showWashingService ? (
+        {!showGarageListing && !showWashingService && !showEVService ? (
           <>
             {/* Banner Carousel */}
             <BannerCarousel 
@@ -524,6 +535,13 @@ const Home = ({ setCurrentPage }) => {
             onBackToMain={backToMain}
             onWashingCenterClick={() => {}} // No redirect to garage sections
             onShowLoginPopup={handleShowWashingLoginPopup}
+          />
+        ) : showEVService ? (
+          <EVService
+            selectedCity={selectedCity}
+            onBackToMain={backToMain}
+            onEVGarageClick={handleGarageClick}
+            onShowLoginPopup={handleShowLoginPopup}
           />
         ) : showGarageDetail && selectedGarage ? (
           <GarageDetailPage

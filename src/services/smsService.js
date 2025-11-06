@@ -51,13 +51,23 @@ export const verifyOtp = async ({ businessid, mobile, otp }) => {
 
     const resData = await response.json();
     console.log("🔍 OTP verification response:", resData);
+    console.log("🔍 Response status code:", response.status);
+
+    // Check if response is ok (status 200-299)
+    if (!response.ok) {
+      console.error('🔍 OTP verification failed with status:', response.status);
+      return {
+        status: false,
+        message: resData.message || `Server error: ${response.status}`,
+      };
+    }
 
     return resData;
   } catch (error) {
-    console.error('OTP verification failed:', error);
+    console.error('❌ OTP verification failed:', error);
     return {
       status: false,
-      message: error?.response?.data?.message || 'Something went wrong',
+      message: error?.message || 'Something went wrong. Please check your connection and try again.',
     };
   }
 };

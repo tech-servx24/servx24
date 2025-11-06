@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { XMarkIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { fetchBikeModels, createUserVehicle } from '../../../services/bookingService';
+import { getSubscriberId, getBusinessId, isAuthenticated } from '../../../services/authService';
 import { useTheme } from '../../context/ThemeContext';
 
 const ModelSelectionPopup = ({ isOpen, onClose, onModelSelect, selectedBrand }) => {
@@ -51,20 +52,35 @@ const ModelSelectionPopup = ({ isOpen, onClose, onModelSelect, selectedBrand }) 
     setSaving(true);
     
     try {
-      // Get user authentication data
-      const subscriberId = localStorage.getItem('subscriberId');
-      const businessId = localStorage.getItem('businessId');
-      
-      if (!subscriberId || !businessId) {
+      // Check if user is authenticated
+      if (!isAuthenticated()) {
         console.error('❌ User not authenticated');
         alert('Please log in to add a vehicle to your profile');
+        setSaving(false);
         return;
       }
 
+      // Get user authentication data using authService
+      const subscriberId = getSubscriberId();
+      const businessId = getBusinessId();
+      
+      // Validate subscriber ID and business ID are valid numbers
+      const subscriberIdNum = subscriberId ? parseInt(subscriberId) : null;
+      const businessIdNum = businessId ? parseInt(businessId) : null;
+      
+      if (!subscriberIdNum || !businessIdNum || subscriberIdNum === 0 || businessIdNum === 0 || isNaN(subscriberIdNum) || isNaN(businessIdNum)) {
+        console.error('❌ Invalid subscriber ID or business ID:', { subscriberId: subscriberIdNum, businessId: businessIdNum });
+        alert('Please log in to add a vehicle to your profile. Your session may have expired.');
+        setSaving(false);
+        return;
+      }
+
+      console.log('✅ User authenticated with subscriber ID:', subscriberIdNum, 'business ID:', businessIdNum);
+
       // Create vehicle in user's profile
       const vehiclePayload = {
-        businessid: parseInt(businessId),
-        subscriberid: parseInt(subscriberId),
+        businessid: businessIdNum,
+        subscriberid: subscriberIdNum,
         model: model.id,
         brand: selectedBrand.id,
         cc_id: model.cc_id || 1,
@@ -75,8 +91,10 @@ const ModelSelectionPopup = ({ isOpen, onClose, onModelSelect, selectedBrand }) 
 
       console.log('🔍 Creating vehicle with payload:', vehiclePayload);
       const createResponse = await createUserVehicle(vehiclePayload);
+      console.log('🔍 Vehicle creation response:', createResponse);
       
-      if (createResponse.success !== false) {
+      // Check response status - backend returns status: true/false (not success)
+      if (createResponse && (createResponse.status === true || createResponse.success === true)) {
         // Vehicle created successfully, now create bike data for booking
         const bikeData = {
           id: createResponse.data?.id || model.id,
@@ -96,12 +114,14 @@ const ModelSelectionPopup = ({ isOpen, onClose, onModelSelect, selectedBrand }) 
         console.log('✅ Vehicle created successfully:', bikeData);
         onModelSelect(bikeData);
       } else {
-        console.error('❌ Failed to create vehicle:', createResponse.message);
-        alert('Failed to add vehicle to your profile. Please try again.');
+        const errorMessage = createResponse?.message || 'Unknown error occurred';
+        console.error('❌ Failed to create vehicle:', errorMessage, createResponse);
+        alert(`Failed to add vehicle to your profile: ${errorMessage}. Please try again or log in again.`);
       }
     } catch (error) {
       console.error('❌ Error creating vehicle:', error);
-      alert('Failed to add vehicle to your profile. Please try again.');
+      const errorMessage = error?.response?.data?.message || error.message || 'Unknown error occurred';
+      alert(`Failed to add vehicle to your profile: ${errorMessage}. Please try again or log in again.`);
     } finally {
       setSaving(false);
     }

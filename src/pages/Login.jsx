@@ -7,7 +7,7 @@ import {
   WrenchScrewdriverIcon,
   CurrencyDollarIcon
 } from '@heroicons/react/24/outline';
-// OTP temporarily disabled; login via mobile only
+import { sendSMS, verifyOtp } from '../services/smsService';
 import { setAuthData } from '../services/authService';
 import { useTheme } from '../components/context/ThemeContext';
 
@@ -57,58 +57,163 @@ const Login = ({ setCurrentPage, setIsLoggedIn }) => {
 
     setIsLoading(true);
     setError('');
+    setSuccessMessage('');
 
     try {
-      // Directly authenticate using mobile only (temporary)
-      const token = `mobile_${trimmedNumber}_${Date.now()}`; // ensure sufficient length
-      const subscriberId = '0';
-      const businessId = 3; // keep existing business id context
-
-      setAuthData(token, subscriberId, businessId);
-      localStorage.setItem('mobileNumber', trimmedNumber);
-      setIsLoggedIn(true);
-      setSuccessMessage('Login successful!');
-
-      // Handle redirects consistent with previous flow
-      const urlParams = new URLSearchParams(window.location.search);
-      const returnTo = urlParams.get('returnTo');
-      const garageId = urlParams.get('garageId');
-      const vehicleType = urlParams.get('vehicleType');
-
-      const bookingIntent = sessionStorage.getItem('bookingIntent');
-      let bookingData = null;
-      if (bookingIntent) {
-        try {
-          bookingData = JSON.parse(bookingIntent);
-          sessionStorage.removeItem('bookingIntent');
-        } catch (e) {
-          console.error('Error parsing booking intent:', e);
-        }
+      // Send OTP to mobile number
+      const businessId = 3;
+      const response = await sendSMS(businessId, trimmedNumber);
+      
+      if (response.status === true) {
+        setShowOtpField(true);
+        setResendTimer(30);
+        setSuccessMessage(response.message || 'OTP sent successfully!');
+      } else {
+        setError(response.message || 'Failed to send OTP. Please try again.');
       }
-
-      setTimeout(() => {
-        if ((returnTo === 'booking' && garageId) || bookingData) {
-          const finalGarageId = garageId || bookingData?.garageId;
-          const finalVehicleType = vehicleType || bookingData?.vehicleType || 'two-wheeler';
-          window.location.href = `/booking?garageId=${finalGarageId}&returnTo=garage-list&vehicleType=${finalVehicleType}`;
-        } else if (returnTo === 'home' || bookingData?.returnTo === 'home') {
-          setCurrentPage('home');
-        } else {
-          setCurrentPage('profile');
-        }
-      }, 800);
     } catch (error) {
-      console.error('Login error:', error);
-      setError('Something went wrong while logging in.');
+      console.error('Error sending OTP:', error);
+      setError('Something went wrong while sending OTP. Please try again.');
     } finally {
       setIsLoading(false);
     }
   };
 
-  // OTP flow disabled
-  const handleSubmitOtp = async () => {};
-  const handleResendOtp = () => {};
-  const handleBackToMobile = () => {};
+  const handleSubmitOtp = async () => {
+    const otpString = otp.join('');
+    if (otpString.length !== 4) {
+      setError('Please enter the complete 4-digit OTP.');
+      return;
+    }
+
+    setIsLoading(true);
+    setError('');
+    setSuccessMessage('');
+
+    try {
+      const businessId = 3;
+      const trimmedNumber = mobile.trim();
+      
+      const response = await verifyOtp({
+        businessid: businessId,
+        mobile: trimmedNumber,
+        otp: otpString
+      });
+
+      console.log('OTP verification response:', response);
+      console.log('🔍 Response data:', response.data);
+      console.log('🔍 Token:', response.data?.token);
+      console.log('🔍 Subscriber ID:', response.data?.subscriber_id);
+      console.log('🔍 Business ID:', response.data?.business_id);
+
+      if (response.status === true && response.data) {
+        // Validate required fields from response
+        const token = response.data.token;
+        const subscriberId = response.data.subscriber_id;
+        const businessId = response.data.business_id;
+
+        console.log('🔍 Validating fields - token:', !!token, 'subscriberId:', subscriberId, 'businessId:', businessId);
+
+        // Use default business ID if not provided in response (backend sometimes doesn't return it)
+        const defaultBusinessId = 3;
+        const finalBusinessId = businessId || defaultBusinessId;
+
+        if (!token || subscriberId === undefined || subscriberId === null) {
+          console.error('❌ Missing required fields in response:', {
+            hasToken: !!token,
+            subscriberId: subscriberId,
+            businessId: businessId,
+            fullData: response.data
+          });
+          setError('Invalid response from server. Please try again.');
+          return;
+        }
+
+        console.log('✅ Using business ID:', finalBusinessId, businessId ? '(from response)' : '(default)');
+
+        // Save authentication data
+        setAuthData(
+          token,
+          subscriberId.toString(),
+          finalBusinessId.toString()
+        );
+        localStorage.setItem('mobileNumber', trimmedNumber);
+        setIsLoggedIn(true);
+        setSuccessMessage('Login successful!');
+
+        // Handle redirects consistent with previous flow
+        const urlParams = new URLSearchParams(window.location.search);
+        const returnTo = urlParams.get('returnTo');
+        const garageId = urlParams.get('garageId');
+        const vehicleType = urlParams.get('vehicleType');
+
+        const bookingIntent = sessionStorage.getItem('bookingIntent');
+        let bookingData = null;
+        if (bookingIntent) {
+          try {
+            bookingData = JSON.parse(bookingIntent);
+            sessionStorage.removeItem('bookingIntent');
+          } catch (e) {
+            console.error('Error parsing booking intent:', e);
+          }
+        }
+
+        setTimeout(() => {
+          if ((returnTo === 'booking' && garageId) || bookingData) {
+            const finalGarageId = garageId || bookingData?.garageId;
+            const finalVehicleType = vehicleType || bookingData?.vehicleType || 'two-wheeler';
+            window.location.href = `/booking?garageId=${finalGarageId}&returnTo=garage-list&vehicleType=${finalVehicleType}`;
+          } else if (returnTo === 'home' || bookingData?.returnTo === 'home') {
+            setCurrentPage('home');
+          } else {
+            setCurrentPage('profile');
+          }
+        }, 800);
+      } else {
+        setError(response.message || 'Invalid OTP. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error verifying OTP:', error);
+      setError('Something went wrong while verifying OTP. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleResendOtp = async () => {
+    if (resendTimer > 0) return;
+
+    setIsLoading(true);
+    setError('');
+    setSuccessMessage('');
+
+    try {
+      const businessId = 3;
+      const trimmedNumber = mobile.trim();
+      
+      const response = await sendSMS(businessId, trimmedNumber);
+      
+      if (response.status === true) {
+        setResendTimer(30);
+        setSuccessMessage('OTP resent successfully!');
+      } else {
+        setError(response.message || 'Failed to resend OTP. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error resending OTP:', error);
+      setError('Something went wrong while resending OTP. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleBackToMobile = () => {
+    setShowOtpField(false);
+    setOtp(['', '', '', '']);
+    setError('');
+    setSuccessMessage('');
+    setResendTimer(30);
+  };
 
   return (
     <div className={`min-h-screen ${theme === 'light' ? 'bg-white text-gray-900' : 'bg-black text-white'}`}>
@@ -193,7 +298,7 @@ const Login = ({ setCurrentPage, setIsLoggedIn }) => {
               <p className={`text-sm ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>Enter your mobile number to get started</p>
             </div>
 
-            {
+            {!showOtpField ? (
               <>
                 {/* Mobile Input */}
                 <div className="mb-6">
@@ -209,6 +314,7 @@ const Login = ({ setCurrentPage, setIsLoggedIn }) => {
                       }}
                       placeholder="Enter 10-digit mobile number"
                       className={`w-full pl-12 pr-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent ${theme === 'light' ? 'bg-white text-gray-900 border border-gray-300' : 'bg-gray-800 text-white border border-gray-700'}`}
+                      maxLength={10}
                     />
                     {mobile && (
                       <button
@@ -226,13 +332,78 @@ const Login = ({ setCurrentPage, setIsLoggedIn }) => {
 
                 <button
                   onClick={handleLoginSubmit}
-                  disabled={!mobile || isLoading}
+                  disabled={!mobile || mobile.length !== 10 || isLoading}
                   className="w-full bg-red-600 hover:bg-red-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white py-3 rounded-lg font-semibold transition-colors mb-4"
                 >
-                  {isLoading ? 'Logging in...' : 'Continue'}
+                  {isLoading ? 'Sending OTP...' : 'Send OTP'}
                 </button>
               </>
-            }
+            ) : (
+              <>
+                {/* OTP Input Fields */}
+                <div className="mb-6">
+                  <label className={`block text-sm mb-2 ${theme === 'light' ? 'text-gray-700' : 'text-gray-400'}`}>Enter OTP</label>
+                  <p className={`text-sm mb-4 ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
+                    We've sent a 4-digit OTP to {mobile}
+                  </p>
+                  <div className="flex gap-3 justify-center">
+                    {otp.map((digit, index) => (
+                      <input
+                        key={index}
+                        id={`otp-${index}`}
+                        type="text"
+                        value={digit}
+                        onChange={(e) => handleOtpChange(index, e.target.value)}
+                        onKeyDown={(e) => handleOtpKeyDown(index, e)}
+                        maxLength={1}
+                        className={`w-12 h-12 text-center text-lg font-semibold rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent ${
+                          theme === 'light'
+                            ? 'bg-white text-gray-900 border border-gray-300'
+                            : 'bg-gray-800 text-white border border-gray-700'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Verify OTP Button */}
+                <button
+                  onClick={handleSubmitOtp}
+                  disabled={isLoading || otp.join('').length !== 4}
+                  className="w-full bg-red-600 hover:bg-red-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white py-3 rounded-lg font-semibold transition-colors mb-3"
+                >
+                  {isLoading ? 'Verifying...' : 'Verify OTP'}
+                </button>
+
+                {/* Back to Mobile Button */}
+                <button
+                  onClick={handleBackToMobile}
+                  disabled={isLoading}
+                  className={`w-full text-sm py-2 transition-colors mb-3 ${
+                    theme === 'light' ? 'text-gray-600 hover:text-gray-800' : 'text-gray-400 hover:text-white'
+                  }`}
+                >
+                  Change Mobile Number
+                </button>
+
+                {/* Resend OTP */}
+                <div className="text-center">
+                  {resendTimer > 0 ? (
+                    <p className={`text-sm ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
+                      Resend OTP in {resendTimer}s
+                    </p>
+                  ) : (
+                    <button
+                      onClick={handleResendOtp}
+                      disabled={isLoading}
+                      className="text-sm text-red-500 hover:text-red-400 transition-colors"
+                    >
+                      Resend OTP
+                    </button>
+                  )}
+                </div>
+              </>
+            )}
 
             {/* Error Message */}
             {error && (
