@@ -231,9 +231,9 @@ const AboutUs = ({ setCurrentPage }) => {
               REDEFINING
             </span>
             <br />
-            <span className={theme === 'light' ? 'text-gray-900' : 'text-white'}>VEHICLE CARE</span>
+            <span className="text-white">VEHICLE CARE</span>
           </h1>
-          <p className={`text-lg md:text-xl mb-8 max-w-3xl mx-auto ${theme === 'light' ? 'text-gray-700' : 'text-gray-300'}`}>
+          <p className="text-lg md:text-xl mb-8 max-w-3xl mx-auto text-gray-300">
             At ServX24, we make vehicle ownership simpler with online garages, roadside assistance, trusted servicing, and EV support—all in one place.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -397,7 +397,7 @@ const AboutUs = ({ setCurrentPage }) => {
               onClick={() => setCurrentPage('home')}
               className="bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 text-white font-semibold py-3 px-8 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
             >
-              Shop Now
+              Explore
             </button>
             <button 
               onClick={() => setCurrentPage('contact')}
