@@ -57,43 +57,67 @@ const AddVehicleModal = ({ isOpen, onClose, onSuccess }) => {
       
       if (!subscriberId || !businessId) {
         setError('User not authenticated');
+        setLoading(false);
         return;
       }
 
-      // Create vehicle in user's profile
+      // Create vehicle in user's profile - backend only requires: businessid, subscriberid, and model
       const vehiclePayload = {
         businessid: parseInt(businessId),
         subscriberid: parseInt(subscriberId),
-        model: model.id,
-        brand: selectedBrand.id,
-        cc_id: model.cc_id || 1,
-        year: new Date().getFullYear(),
-        registration_number: `TEMP-${Date.now()}`,
-        image: model.image || "https://images.pexels.com/photos/190537/pexels-photo-190537.jpeg"
+        model: model.id
       };
 
-      const createResponse = await createUserVehicle(vehiclePayload);
-      
-      if (createResponse.success !== false) {
-        // Vehicle created successfully
-        const vehicleData = {
-          id: createResponse.data?.id || model.id,
-          name: model.name,
-          brand: selectedBrand.name,
-          model: model.name,
-          cc: model.cc || "110cc",
-          year: new Date().getFullYear(),
-          image: model.image || "https://images.pexels.com/photos/190537/pexels-photo-190537.jpeg"
-        };
+      try {
+        const createResponse = await createUserVehicle(vehiclePayload);
         
-        onSuccess(vehicleData);
-        handleClose();
-      } else {
-        setError(createResponse.message || 'Failed to add vehicle');
+        if (createResponse && (createResponse.status === true || createResponse.success === true)) {
+          // Vehicle created successfully
+          const vehicleData = {
+            id: createResponse.data?.id || model.id,
+            name: model.name,
+            brand: selectedBrand.name,
+            model: model.name,
+            cc: model.cc || "110cc",
+            year: new Date().getFullYear(),
+            image: model.image || "https://images.pexels.com/photos/190537/pexels-photo-190537.jpeg"
+          };
+          
+          onSuccess(vehicleData);
+          handleClose();
+          return;
+        } else {
+          setError(createResponse?.message || 'Failed to add vehicle');
+        }
+      } catch (error) {
+        // Check if the error is because vehicle already exists
+        const errorMessage = error?.response?.data?.message || error?.message || '';
+        
+        if (errorMessage.includes('already exists') || errorMessage.includes('This vehicle model already exists')) {
+          // Vehicle already exists - treat as success and use the existing vehicle
+          console.log('✅ Vehicle already exists, using existing vehicle');
+          const vehicleData = {
+            id: model.id,
+            name: model.name,
+            brand: selectedBrand.name,
+            model: model.name,
+            cc: model.cc || "110cc",
+            year: new Date().getFullYear(),
+            image: model.image || "https://images.pexels.com/photos/190537/pexels-photo-190537.jpeg"
+          };
+          
+          onSuccess(vehicleData);
+          handleClose();
+          return;
+        } else {
+          // Other error occurred
+          console.error('Error creating vehicle:', error);
+          setError(errorMessage || 'Failed to add vehicle. Please try again.');
+        }
       }
     } catch (error) {
-      console.error('Error creating vehicle:', error);
-      setError('Failed to add vehicle');
+      console.error('Unexpected error:', error);
+      setError('An unexpected error occurred. Please try again.');
     } finally {
       setLoading(false);
     }

@@ -12,9 +12,10 @@ const BannerCarousel = ({ banners, onFindGaragesClick }) => {
   const hasMultipleBanners = bannerList.length >= 2;
 
   // If no banners, show a default banner
+  // Banner aspect ratio: 1240x300px = 4.13:1
   if (bannerList.length === 0) {
     return (
-      <section className="relative h-[50vh] w-full overflow-hidden">
+      <section className="relative w-full overflow-hidden" style={{ aspectRatio: '1240/300', maxHeight: '300px' }}>
         <div className="relative h-full w-full">
           <div 
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -24,15 +25,15 @@ const BannerCarousel = ({ banners, onFindGaragesClick }) => {
           </div>
           <div className="relative z-10 flex items-center justify-center h-full px-2 sm:px-4">
             <div className="max-w-4xl mx-auto text-center">
-              <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold mb-1 sm:mb-2 md:mb-4 leading-tight">
+              <h1 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold mb-1 sm:mb-2 leading-tight">
                 <span className="text-white">Find Your</span>
                 <span className="text-cyan-400"> Perfect</span>
                 <span className="text-white"> Garage</span>
               </h1>
-              <p className="text-xs sm:text-sm md:text-lg lg:text-xl text-gray-300 mb-3 sm:mb-4 md:mb-6 max-w-xs sm:max-w-lg md:max-w-2xl mx-auto leading-relaxed">
+              <p className="text-xs sm:text-sm md:text-base text-gray-300 mb-2 sm:mb-3 max-w-xs sm:max-w-lg md:max-w-2xl mx-auto leading-relaxed">
                 Professional vehicle service and maintenance at your fingertips
               </p>
-              <div className="flex flex-row gap-1.5 sm:gap-2 md:gap-3 justify-center">
+              <div className="flex flex-row gap-1.5 sm:gap-2 justify-center">
                 <button 
                   onClick={onFindGaragesClick}
                   className="bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 text-white font-semibold py-1.5 px-2 sm:py-2 sm:px-4 md:px-5 rounded-md sm:rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl text-xs sm:text-sm md:text-base max-w-[120px] sm:max-w-none"
@@ -51,7 +52,7 @@ const BannerCarousel = ({ banners, onFindGaragesClick }) => {
   }
 
   return (
-    <section className="relative h-[50vh] w-full overflow-hidden">
+    <section className="relative w-full overflow-hidden" style={{ aspectRatio: '1240/300', maxHeight: '300px' }}>
       <Swiper
         key={`banner-carousel-${bannerList.length}`}
         modules={[Autoplay, Pagination, Navigation]}
@@ -88,7 +89,8 @@ const BannerCarousel = ({ banners, onFindGaragesClick }) => {
               </div>
               <div className="relative z-10 flex items-center justify-center h-full px-2 sm:px-4" style={{ width: '100%', height: '100%' }}>
                 <div className="max-w-4xl mx-auto text-center">
-                  <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold mb-1 sm:mb-2 md:mb-4 leading-tight">
+                  <h1 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold mb-1 sm:mb-2 leading-tight">
+                    {/* Use banner title if available, otherwise use default */}
                     {banner.title ? (
                       <>
                         <span className="text-white">{banner.title.split(' ')[0]}</span>
@@ -103,10 +105,11 @@ const BannerCarousel = ({ banners, onFindGaragesClick }) => {
                       </>
                     )}
                   </h1>
-                  <p className="text-xs sm:text-sm md:text-lg lg:text-xl text-gray-300 mb-3 sm:mb-4 md:mb-6 max-w-xs sm:max-w-lg md:max-w-2xl mx-auto leading-relaxed">
+                  <p className="text-xs sm:text-sm md:text-base text-gray-300 mb-2 sm:mb-3 max-w-xs sm:max-w-lg md:max-w-2xl mx-auto leading-relaxed">
+                    {/* Use banner subtitle/description if available, otherwise use default */}
                     {banner.subtitle || banner.description || 'Professional vehicle service and maintenance at your fingertips'}
                   </p>
-                  <div className="flex flex-row gap-1.5 sm:gap-2 md:gap-3 justify-center">
+                  <div className="flex flex-row gap-1.5 sm:gap-2 justify-center">
                     <button 
                       onClick={onFindGaragesClick}
                       className="bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 text-white font-semibold py-1.5 px-2 sm:py-2 sm:px-4 md:px-5 rounded-md sm:rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl text-xs sm:text-sm md:text-base max-w-[120px] sm:max-w-none"

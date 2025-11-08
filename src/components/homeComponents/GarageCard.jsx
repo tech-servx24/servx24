@@ -56,11 +56,6 @@ const GarageCard = ({ garage, onClick, isExpanded = false, setCurrentPage, onSho
           alt={garage.name}
           className="w-full h-48 object-cover"
         />
-        {garage.verified && (
-          <div className="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center">
-            <FontAwesomeIcon icon={faCheck} className="mr-1" /> Verified
-          </div>
-        )}
         <div className="absolute bottom-2 left-2 bg-black bg-opacity-75 text-white px-2 py-1 rounded text-sm">
           {garage.distance}km away
         </div>
@@ -68,7 +63,14 @@ const GarageCard = ({ garage, onClick, isExpanded = false, setCurrentPage, onSho
       
       <div className="p-4">
         <div className="flex items-start justify-between mb-2">
-          <h3 className={`text-lg font-semibold ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>{garage.name}</h3>
+          <div className="flex items-center gap-2 flex-wrap">
+            <h3 className={`text-lg font-semibold ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>{garage.name}</h3>
+            {garage.is_verified && (
+              <div className="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center">
+                Verified <FontAwesomeIcon icon={faCheck} className="ml-1" />
+              </div>
+            )}
+          </div>
           <div className="flex items-center">
             {renderStars(garage.rating)}
             <span className={`ml-1 text-sm ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>({garage.rating})</span>

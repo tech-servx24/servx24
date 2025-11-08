@@ -125,10 +125,10 @@ const ServiceCategories = forwardRef(({ onServiceClick }, ref) => {
     },
     {
       id: 6,
-      title: "Emergency Services",
+      title: "Roadside Assistance (RSA)",
       description: "24/7 roadside assistance",
       icon: faExclamationTriangle,
-      available: false,
+      available: true,
       type: 'emergency'
     }
   ];
@@ -172,25 +172,27 @@ const ServiceCategories = forwardRef(({ onServiceClick }, ref) => {
           {serviceCategories.map((category) => (
             <div key={category.id} className="relative">
               <div
-                className={`${theme === 'light' ? 'bg-white border border-gray-200 hover:bg-gray-100' : 'bg-gray-800 hover:bg-gray-700'} rounded-xl p-3 md:p-6 text-center transition-all cursor-pointer transform hover:scale-105`}
+                className={`${theme === 'light' ? 'bg-white border border-gray-200 hover:bg-gray-100' : 'bg-gray-800 hover:bg-gray-700'} rounded-xl p-3 md:p-6 text-center transition-all cursor-pointer transform hover:scale-105 flex flex-col lg:h-[280px]`}
                 onClick={() => handleCardClick(category)}
               >
-                <div className="text-2xl md:text-4xl mb-2 md:mb-4" style={{ background: 'linear-gradient(135deg, #ff3864, #cc1e3a)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                <div className="text-2xl md:text-4xl mb-2 md:mb-4 flex-shrink-0" style={{ background: 'linear-gradient(135deg, #ff3864, #cc1e3a)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
                   <FontAwesomeIcon icon={category.icon} />
                 </div>
-                <h3 className={`text-sm md:text-lg font-semibold mb-1 md:mb-2 ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>{category.title}</h3>
-                <p className={`text-xs md:text-base mb-2 md:mb-4 ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>{category.description}</p>
+                <h3 className={`text-sm md:text-lg font-semibold mb-1 md:mb-2 flex-shrink-0 ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>{category.title}</h3>
+                <p className={`text-xs md:text-base mb-2 md:mb-4 flex-grow ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>{category.description}</p>
                 
-                {category.available ? (
-                  <button 
-                    onClick={() => handleCardClick(category)}
-                    className="bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 text-white font-semibold py-1 px-2 md:py-2 md:px-4 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl text-xs md:text-sm"
-                  >
-                    {category.hasDropdown ? 'SELECT VEHICLE' : 'FIND GARAGES'}
-                  </button>
-                ) : (
-                  <span className={`${theme === 'light' ? 'text-gray-500' : 'text-gray-500'} text-xs md:text-sm`}>Coming Soon</span>
-                )}
+                <div className="flex-shrink-0 mt-auto">
+                  {category.available ? (
+                    <button 
+                      onClick={() => handleCardClick(category)}
+                      className="bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 text-white font-semibold py-1 px-2 md:py-2 md:px-4 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl text-xs md:text-sm w-full"
+                    >
+                      {category.hasDropdown ? 'SELECT VEHICLE' : 'FIND GARAGES'}
+                    </button>
+                  ) : (
+                    <span className={`${theme === 'light' ? 'text-gray-500' : 'text-gray-500'} text-xs md:text-sm`}>Coming Soon</span>
+                  )}
+                </div>
               </div>
 
             </div>

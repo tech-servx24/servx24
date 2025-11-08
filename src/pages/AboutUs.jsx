@@ -218,12 +218,12 @@ const AboutUs = ({ setCurrentPage }) => {
         <div className="absolute inset-0 bg-black bg-opacity-70"></div>
         
         {/* Floating Elements */}
-        <div className="absolute inset-0 pointer-events-none">
+        {/* <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-20 left-10 text-4xl animate-bounce">🚴</div>
           <div className="absolute top-32 right-20 text-3xl animate-pulse">⚡</div>
           <div className="absolute bottom-40 left-20 text-3xl animate-bounce">🔧</div>
           <div className="absolute bottom-20 right-10 text-4xl animate-pulse">🌙</div>
-        </div>
+        </div> */}
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">

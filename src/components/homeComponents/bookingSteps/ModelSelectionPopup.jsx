@@ -78,15 +78,11 @@ const ModelSelectionPopup = ({ isOpen, onClose, onModelSelect, selectedBrand }) 
       console.log('✅ User authenticated with subscriber ID:', subscriberIdNum, 'business ID:', businessIdNum);
 
       // Create vehicle in user's profile
+      // Backend only requires: businessid, subscriberid, and model
       const vehiclePayload = {
         businessid: businessIdNum,
         subscriberid: subscriberIdNum,
-        model: model.id,
-        brand: selectedBrand.id,
-        cc_id: model.cc_id || 1,
-        year: new Date().getFullYear(), // Default to current year
-        registration_number: `TEMP-${Date.now()}`, // Temporary registration number
-        image: model.image || "https://images.pexels.com/photos/190537/pexels-photo-190537.jpeg"
+        model: model.id
       };
 
       console.log('🔍 Creating vehicle with payload:', vehiclePayload);
@@ -120,7 +116,20 @@ const ModelSelectionPopup = ({ isOpen, onClose, onModelSelect, selectedBrand }) 
       }
     } catch (error) {
       console.error('❌ Error creating vehicle:', error);
-      const errorMessage = error?.response?.data?.message || error.message || 'Unknown error occurred';
+      // Extract error message from different possible locations
+      let errorMessage = 'Unknown error occurred';
+      if (error?.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error?.message) {
+        errorMessage = error.message;
+      } else if (typeof error === 'string') {
+        errorMessage = error;
+      }
+      console.error('❌ Full error details:', {
+        error,
+        response: error?.response,
+        data: error?.response?.data
+      });
       alert(`Failed to add vehicle to your profile: ${errorMessage}. Please try again or log in again.`);
     } finally {
       setSaving(false);

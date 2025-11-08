@@ -292,7 +292,14 @@ const GarageDetailPage = ({ garage, onClose, onBookNow }) => {
                   }}
                 />
                 <div>
-                  <h1 className={`text-xl font-bold ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>{displayGarage?.name}</h1>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h1 className={`text-xl font-bold ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>{displayGarage?.name}</h1>
+                    {(displayGarage?.is_verified || garage?.is_verified) && (
+                      <div className="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center">
+                        Verified <FontAwesomeIcon icon={faCheck} className="ml-1" />
+                      </div>
+                    )}
+                  </div>
                   <div className="flex items-center space-x-2">
                     <div className="flex items-center">
                       {[...Array(5)].map((_, i) => (
@@ -614,7 +621,14 @@ const GarageDetailPage = ({ garage, onClose, onBookNow }) => {
                     <FontAwesomeIcon icon={faTools} className="text-lg sm:text-xl md:text-2xl text-white" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <h3 className={`text-lg sm:text-xl md:text-2xl font-bold mb-1 sm:mb-2 truncate ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>{displayGarage?.name}</h3>
+                    <div className="flex items-center gap-2 flex-wrap mb-1 sm:mb-2">
+                      <h3 className={`text-lg sm:text-xl md:text-2xl font-bold truncate ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>{displayGarage?.name}</h3>
+                      {(displayGarage?.is_verified || garage?.is_verified) && (
+                        <div className="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center">
+                          Verified <FontAwesomeIcon icon={faCheck} className="ml-1" />
+                        </div>
+                      )}
+                    </div>
                     <div className="flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-4">
                       <div className="flex items-center">
                         {[...Array(5)].map((_, i) => (

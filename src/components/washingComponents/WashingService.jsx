@@ -1,166 +1,185 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronDownIcon, MapPinIcon, StarIcon, ClockIcon, PhoneIcon } from '@heroicons/react/24/outline';
+import { ChevronDownIcon } from '@heroicons/react/24/outline';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSprayCan, faCar, faMotorcycle, faTruck, faStar } from '@fortawesome/free-solid-svg-icons';
-import WashingCenterDetail from './WashingCenterDetail';
+import { faSprayCan, faCar, faMotorcycle, faTimes } from '@fortawesome/free-solid-svg-icons';
+import GarageCard from '../homeComponents/GarageCard';
+import { getGaragesByServiceCategory } from '../../services/garageService';
+import { apiGet } from '../../utils/api';
+import { getStoredLocationData } from '../../utils/geolocation';
 import { useTheme } from '../context/ThemeContext';
 
-// Independent Washing & Detailing Service Component
-// Uses only mock data - no API calls or redirects to garage sections
+// Fallback Washing & Detailing Service Category ID - Update this if the ID changes
+// Check admin panel Service Categories table for the actual ID of "Washing & Detailing"
+const FALLBACK_WASHING_SERVICE_ID = 8; // Update based on actual ID in admin panel
+
 const WashingService = ({ selectedCity, onBackToMain, onWashingCenterClick, onShowLoginPopup }) => {
   const { theme } = useTheme();
   const navigate = useNavigate();
-  const [washingCenters, setWashingCenters] = useState([]);
-  const [filteredCenters, setFilteredCenters] = useState([]);
+  const [washingGarages, setWashingGarages] = useState([]);
+  const [filteredGarages, setFilteredGarages] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [locationReady, setLocationReady] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [sortBy, setSortBy] = useState('distance');
-  const [serviceType, setServiceType] = useState('all');
-  const [priceRange, setPriceRange] = useState('all');
   const [rating, setRating] = useState('all');
+  const [distance, setDistance] = useState('all');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isSortOpen, setIsSortOpen] = useState(false);
-  const [selectedCenter, setSelectedCenter] = useState(null);
-  const [showCenterDetail, setShowCenterDetail] = useState(false);
-
-  // Mock washing and detailing centers data
-  const mockWashingCenters = [
-    {
-      id: 1,
-      name: "AutoSpa Premium Detailing",
-      location: "Koregaon Park",
-      address: "123, ABC Complex, Koregaon Park, Pune",
-      phone: "+91 98765 43210",
-      rating: 4.8,
-      distance: 1.2,
-      operatingHours: "8:00 AM - 8:00 PM",
-      image: "https://plus.unsplash.com/premium_photo-1661443456250-5cd06d09701c?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      services: [
-        { name: "Basic Car Wash", price: "₹299" },
-        { name: "Premium Detailing", price: "₹1,299" },
-        { name: "Interior Cleaning", price: "₹599" },
-        { name: "Paint Protection", price: "₹2,999" }
-      ],
-      vehicleTypes: ['car', 'bike'],
-      serviceTypes: ['basic-wash', 'premium-detailing', 'interior'],
-      priceRange: 'premium',
-      description: "Premium car wash and detailing services with eco-friendly products"
-    },
-    {
-      id: 2,
-      name: "QuickWash Express",
-      location: "Hinjewadi",
-      address: "456, Tech Park, Hinjewadi, Pune",
-      phone: "+91 98765 43211",
-      rating: 4.5,
-      distance: 2.1,
-      operatingHours: "7:00 AM - 9:00 PM",
-      image: "https://plus.unsplash.com/premium_photo-1661443444726-38e00b169bb2?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      services: [
-        { name: "Express Wash", price: "₹199" },
-        { name: "Vacuum Cleaning", price: "₹99" },
-        { name: "Tire Shine", price: "₹149" }
-      ],
-      vehicleTypes: ['car', 'bike'],
-      serviceTypes: ['basic-wash', 'express'],
-      priceRange: 'budget',
-      description: "Quick and efficient car wash services for busy professionals"
-    },
-    {
-      id: 3,
-      name: "Elite Detailing Studio",
-      location: "Baner",
-      address: "789, Business Hub, Baner, Pune",
-      phone: "+91 98765 43212",
-      rating: 4.9,
-      distance: 3.5,
-      operatingHours: "9:00 AM - 7:00 PM",
-      image: "https://images.unsplash.com/photo-1652454449601-e83b62eabe94?q=80&w=464&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      services: [
-        { name: "Ceramic Coating", price: "₹4,999" },
-        { name: "Paint Correction", price: "₹3,999" },
-        { name: "Leather Treatment", price: "₹1,999" },
-        { name: "Engine Bay Cleaning", price: "₹799" }
-      ],
-      vehicleTypes: ['car'],
-      serviceTypes: ['premium-detailing', 'ceramic-coating'],
-      priceRange: 'premium',
-      description: "Luxury car detailing with professional-grade equipment"
-    },
-    {
-      id: 4,
-      name: "BikeWash Pro",
-      location: "Wakad",
-      address: "321, Service Center, Wakad, Pune",
-      phone: "+91 98765 43213",
-      rating: 4.6,
-      distance: 1.8,
-      operatingHours: "8:00 AM - 8:00 PM",
-      image: "https://images.unsplash.com/photo-1632823469901-5d2cfff5ba50?q=80&w=387&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      services: [
-        { name: "Bike Wash", price: "₹149" },
-        { name: "Chain Cleaning", price: "₹199" },
-        { name: "Polish & Wax", price: "₹299" },
-        { name: "Seat Cleaning", price: "₹199" }
-      ],
-      vehicleTypes: ['bike'],
-      serviceTypes: ['basic-wash', 'bike-specific'],
-      priceRange: 'budget',
-      description: "Specialized bike washing and maintenance services"
-    },
-    {
-      id: 5,
-      name: "GreenWash Eco Center",
-      location: "Kothrud",
-      address: "654, Green Plaza, Kothrud, Pune",
-      phone: "+91 98765 43214",
-      rating: 4.7,
-      distance: 4.2,
-      operatingHours: "7:00 AM - 9:00 PM",
-      image: "https://images.pexels.com/photos/4870699/pexels-photo-4870699.jpeg",
-      services: [
-        { name: "Eco Car Wash", price: "₹399" },
-        { name: "Waterless Wash", price: "₹599" },
-        { name: "Biodegradable Polish", price: "₹799" }
-      ],
-      vehicleTypes: ['car', 'bike'],
-      serviceTypes: ['eco-friendly', 'basic-wash'],
-      priceRange: 'mid-range',
-      description: "Environmentally friendly car wash using recycled water"
-    },
-    {
-      id: 6,
-      name: "Luxury Auto Spa",
-      location: "Koregaon Park",
-      address: "987, Luxury Mall, Koregaon Park, Pune",
-      phone: "+91 98765 43215",
-      rating: 4.9,
-      distance: 1.5,
-      operatingHours: "10:00 AM - 8:00 PM",
-      image: "https://images.pexels.com/photos/4870707/pexels-photo-4870707.jpeg",
-      services: [
-        { name: "Full Detailing", price: "₹2,999" },
-        { name: "Paint Protection Film", price: "₹8,999" },
-        { name: "Leather Conditioning", price: "₹1,499" },
-        { name: "Engine Detailing", price: "₹1,299" }
-      ],
-      vehicleTypes: ['car'],
-      serviceTypes: ['premium-detailing', 'luxury'],
-      priceRange: 'premium',
-      description: "High-end luxury car detailing and protection services"
-    }
-  ];
+  const [isVehicleModalOpen, setIsVehicleModalOpen] = useState(true); // Show modal first
+  const [selectedVehicleType, setSelectedVehicleType] = useState(null);
+  const [washingServiceCategoryId, setWashingServiceCategoryId] = useState(null);
+  const [error, setError] = useState(null);
 
   // Check if mobile
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+      setIsMobile(window.innerWidth < 1024);
     };
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  // Initialize location
+  useEffect(() => {
+    if (sessionStorage.getItem("latitude") && sessionStorage.getItem("longitude")) {
+      setLocationReady(true);
+    } else {
+      // Set default location if not available
+      const fallbackLat = 18.5204;
+      const fallbackLng = 73.8567;
+      sessionStorage.setItem("latitude", fallbackLat.toString());
+      sessionStorage.setItem("longitude", fallbackLng.toString());
+      setLocationReady(true);
+    }
+  }, []);
+
+  // Fetch Washing & Detailing service category ID from API
+  useEffect(() => {
+    const fetchWashingServiceCategory = async () => {
+      try {
+        const city = selectedCity || sessionStorage.getItem("selectedCity") || 'Pune';
+        const cityParam = city.toLowerCase();
+        const response = await apiGet(`/active-cities/?city=${cityParam}`);
+        
+        console.log('🧼 Washing Service - Full API response:', response);
+        console.log('🧼 Washing Service - Service categories:', response.data?.filter?.services);
+        
+        if (response.status === "success" && response.data?.filter?.services) {
+          const services = response.data.filter.services;
+          
+          // Log all available service categories for debugging
+          console.log('🧼 Available service categories:', services.map(s => ({ id: s.id, name: s.name })));
+          
+          // Try multiple variations of washing/detailing service name matching
+          const washingService = services.find(
+            service => {
+              const name = service.name.toLowerCase();
+              return name.includes('washing') || 
+                     name.includes('detailing') ||
+                     name.includes('wash') ||
+                     name === 'washing & detailing' ||
+                     name === 'washing and detailing' ||
+                     name.includes('car wash') ||
+                     name.includes('bike wash');
+            }
+          );
+          
+          if (washingService) {
+            console.log('✅ Washing & Detailing Service category found in API response:', washingService);
+            console.log('🧼 Using ID from API response:', washingService.id);
+            setWashingServiceCategoryId(washingService.id);
+          } else {
+            console.log('⚠️ Washing & Detailing Service category not found in displayed categories');
+            console.log('⚠️ Available categories:', services.map(s => `${s.id}: ${s.name}`));
+            console.log('🧼 Note: "Washing & Detailing" may exist in backend but Display is "Hidden"');
+            console.log(`🧼 Using fallback ID ${FALLBACK_WASHING_SERVICE_ID} for Washing & Detailing Service`);
+            setWashingServiceCategoryId(FALLBACK_WASHING_SERVICE_ID);
+          }
+        } else {
+          console.log(`⚠️ No service categories in response, using fallback ID ${FALLBACK_WASHING_SERVICE_ID}`);
+          setWashingServiceCategoryId(FALLBACK_WASHING_SERVICE_ID);
+        }
+      } catch (error) {
+        console.error('❌ Error fetching Washing & Detailing service category:', error);
+        console.log(`🧼 Using fallback ID ${FALLBACK_WASHING_SERVICE_ID} for Washing & Detailing Service`);
+        setWashingServiceCategoryId(FALLBACK_WASHING_SERVICE_ID);
+      }
+    };
+
+    if (selectedCity || locationReady) {
+      fetchWashingServiceCategory();
+    }
+  }, [selectedCity, locationReady]);
+
+  // Fetch Washing & Detailing garages when location and service category ID are ready
+  useEffect(() => {
+    if (!locationReady || !washingServiceCategoryId || isVehicleModalOpen) return;
+
+    const fetchWashingGarages = async () => {
+      setLoading(true);
+      setError(null);
+      
+      try {
+        const { latitude, longitude } = getStoredLocationData();
+        const lat = latitude || 18.5204;
+        const lng = longitude || 73.8567;
+
+        let location = selectedCity || sessionStorage.getItem("selectedCity") || 'Pune';
+        if (location === 'Bangalore') {
+          location = 'Bangalore ';
+        }
+
+        const requestData = {
+          location: location,
+          latitude: lat,
+          longitude: lng,
+          filter: {
+            sort: [],
+            ratings: [],
+            distence: [],
+            service: [washingServiceCategoryId], // Filter by Washing & Detailing service category
+          },
+        };
+
+        console.log('🧼 Fetching Washing & Detailing garages with service category ID:', washingServiceCategoryId);
+        console.log('🧼 Request data:', JSON.stringify(requestData, null, 2));
+        
+        // Validate that service category ID is set
+        if (!washingServiceCategoryId || !requestData.filter.service || requestData.filter.service.length === 0) {
+          console.error('❌ Washing & Detailing Service Category ID is not set!');
+          setError('Washing & Detailing Service category ID not found. Please check the console for details.');
+          setLoading(false);
+          return;
+        }
+        
+        const response = await getGaragesByServiceCategory(requestData);
+        console.log('🧼 Washing & Detailing Garage response:', response);
+        console.log('🧼 Number of garages returned:', response?.data?.length || 0);
+
+        if (response && response.data && response.data.length > 0) {
+          console.log(`✅ Found ${response.data.length} Washing & Detailing service garages`);
+          setWashingGarages(response.data);
+          setFilteredGarages(response.data);
+        } else {
+          setWashingGarages([]);
+          setFilteredGarages([]);
+          console.log('⚠️ No Washing & Detailing garages found with service category ID:', washingServiceCategoryId);
+          setError(null); // Don't show error, show "Coming Soon" message instead
+        }
+      } catch (error) {
+        console.error("❌ Failed to fetch Washing & Detailing garages:", error);
+        setError('Failed to load Washing & Detailing service garages');
+        setWashingGarages([]);
+        setFilteredGarages([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchWashingGarages();
+  }, [locationReady, selectedCity, washingServiceCategoryId, isVehicleModalOpen]);
 
   // Close dropdowns when clicking outside
   useEffect(() => {
@@ -174,128 +193,212 @@ const WashingService = ({ selectedCity, onBackToMain, onWashingCenterClick, onSh
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isSortOpen]);
 
-  // Initialize washing centers
-  useEffect(() => {
-    setWashingCenters(mockWashingCenters);
-    setFilteredCenters(mockWashingCenters);
-    setLoading(false);
-  }, []);
-
-  // Apply filters
-  useEffect(() => {
-    let filtered = [...washingCenters];
-
-    // Service type filter
-    if (serviceType !== 'all') {
-      filtered = filtered.filter(center => 
-        center.serviceTypes.includes(serviceType)
-      );
+  // Vehicle types for washing service
+  const vehicleTypes = [
+    {
+      id: 1,
+      title: "2 Wheeler",
+      description: "Bikes, scooters, motorcycles",
+      icon: faMotorcycle,
+      type: 'two-wheeler',
+      available: true
+    },
+    {
+      id: 2,
+      title: "4 Wheeler",
+      description: "Cars, SUVs, passenger vehicles",
+      icon: faCar,
+      type: 'four-wheeler',
+      available: true
     }
+  ];
 
-    // Price range filter
-    if (priceRange !== 'all') {
-      filtered = filtered.filter(center => 
-        center.priceRange === priceRange
-      );
+  // Handle vehicle type selection
+  const handleVehicleTypeClick = (vehicleType) => {
+    if (vehicleType.available) {
+      setSelectedVehicleType(vehicleType.type);
+      setIsVehicleModalOpen(false);
+    } else {
+      alert(`${vehicleType.title} service - Coming Soon!`);
     }
+  };
+
+  const handleModalBackdropClick = (e) => {
+    if (e.target === e.currentTarget) {
+      // Don't allow closing by clicking backdrop - user must select a vehicle type
+      // setIsVehicleModalOpen(false);
+    }
+  };
+
+  // Apply filters and sorting
+  useEffect(() => {
+    let filtered = [...washingGarages];
 
     // Rating filter
     if (rating !== 'all') {
       const minRating = parseFloat(rating);
-      filtered = filtered.filter(center => 
-        center.rating >= minRating
+      filtered = filtered.filter(garage => 
+        (garage.rating || 0) >= minRating
       );
+    }
+
+    // Distance filter
+    if (distance !== 'all') {
+      const maxDistance = parseFloat(distance);
+      filtered = filtered.filter(garage => {
+        if (garage.distance === null || garage.distance === undefined) return false;
+        return garage.distance <= maxDistance;
+      });
     }
 
     // Sort by
     if (sortBy === 'distance') {
-      filtered.sort((a, b) => a.distance - b.distance);
+      filtered.sort((a, b) => {
+        const distA = a.distance !== null && a.distance !== undefined ? a.distance : Infinity;
+        const distB = b.distance !== null && b.distance !== undefined ? b.distance : Infinity;
+        return distA - distB;
+      });
     } else if (sortBy === 'rating') {
-      filtered.sort((a, b) => b.rating - a.rating);
+      filtered.sort((a, b) => {
+        const ratingA = a.rating || 0;
+        const ratingB = b.rating || 0;
+        return ratingB - ratingA;
+      });
     } else if (sortBy === 'name') {
       filtered.sort((a, b) => a.name.localeCompare(b.name));
     }
 
-    setFilteredCenters(filtered);
-  }, [washingCenters, serviceType, priceRange, rating, sortBy]);
+    setFilteredGarages(filtered);
+  }, [washingGarages, rating, distance, sortBy]);
 
-  const handleWashingCenterClick = (center) => {
-    setSelectedCenter(center);
-    setShowCenterDetail(true);
-  };
-
-  const handleBookNow = (e, center) => {
-    e.stopPropagation();
-    console.log("Book Now clicked for washing center:", center.id, center.name);
-    
-    try {
-      // Direct navigation to washing booking flow - no auth check
-      console.log("Navigating directly to washing booking...");
-      navigate(`/washing-booking?washingCenterId=${center.id}&returnTo=washing-list&vehicleType=all`, { replace: false });
-      console.log("Navigation called successfully");
-    } catch (error) {
-      console.error("Error in handleBookNow:", error);
+  const handleGarageClick = (garage) => {
+    if (onWashingCenterClick) {
+      onWashingCenterClick(garage);
     }
   };
 
-  const handleCloseDetail = () => {
-    setShowCenterDetail(false);
-    setSelectedCenter(null);
-  };
-
-  const handleBookNowFromDetail = (center) => {
-    console.log("Book Now clicked from detail for washing center:", center.id, center.name);
-    
-    try {
-      // Direct navigation to washing booking flow - no auth check
-      console.log("Navigating directly to washing booking from detail...");
-      navigate(`/washing-booking?washingCenterId=${center.id}&returnTo=washing-list&vehicleType=all`, { replace: false });
-      console.log("Navigation called successfully from detail");
-    } catch (error) {
-      console.error("Error in handleBookNowFromDetail:", error);
-    }
-  };
-
-  const renderStars = (rating) => {
-    return Array.from({ length: 5 }, (_, i) => (
-      <StarIcon
-        key={i}
-        className={`w-4 h-4 ${
-          i < Math.floor(rating) ? 'text-yellow-400' : theme === 'light' ? 'text-gray-300' : 'text-gray-600'
-        }`}
-      />
-    ));
-  };
-
-  if (loading) {
+  if (loading && !isVehicleModalOpen) {
     return (
       <div className={`py-12 px-4 ${theme === 'light' ? 'bg-white' : 'bg-black'}`}>
         <div className="max-w-7xl mx-auto">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 mx-auto border-red-600"></div>
-            <p className={`mt-4 ${theme === 'light' ? 'text-gray-700' : 'text-gray-400'}`}>Loading washing centers...</p>
+            <p className={`mt-4 ${theme === 'light' ? 'text-gray-700' : 'text-gray-400'}`}>
+              Loading Washing & Detailing centers...
+            </p>
           </div>
         </div>
       </div>
     );
   }
 
-  // If showing center detail, render the detail page
-  if (showCenterDetail && selectedCenter) {
+  // Show vehicle type selection modal first
+  if (isVehicleModalOpen) {
     return (
-      <WashingCenterDetail
-        center={selectedCenter}
-        onClose={handleCloseDetail}
-        onBookNow={handleBookNowFromDetail}
-      />
+      <div className={`min-h-screen ${theme === 'light' ? 'bg-white text-gray-900' : 'bg-black text-white'}`}>
+        {/* Header with Back Button */}
+        <div className={`${theme === 'light' ? 'bg-gray-50 border-gray-200' : 'bg-gray-900 border-gray-800'} border-b py-4 px-4`}>
+          <div className="max-w-7xl mx-auto flex items-center justify-between">
+            <button
+              onClick={onBackToMain}
+              className={`flex items-center transition-colors ${theme === 'light' ? 'text-gray-600 hover:text-red-600' : 'text-white hover:text-red-500'}`}
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <h1 className={`text-xl font-bold ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>
+              <FontAwesomeIcon icon={faSprayCan} className="mr-2" />
+              Washing & Detailing
+            </h1>
+            <div className="w-5"></div> {/* Spacer for centering */}
+          </div>
+        </div>
+
+        {/* Vehicle Type Selection Modal */}
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4"
+          onClick={handleModalBackdropClick}
+        >
+          <div className={`${theme === 'light' ? 'bg-white' : 'bg-gray-900'} rounded-2xl shadow-2xl max-w-4xl w-full max-h-[85vh] flex flex-col relative`}>
+            {/* Close Button */}
+            <button
+              onClick={onBackToMain}
+              className={`absolute top-4 right-4 transition-colors p-2 z-10 ${theme === 'light' ? 'text-gray-900 hover:text-red-600' : 'text-white hover:text-red-200'}`}
+            >
+              <FontAwesomeIcon icon={faTimes} className="text-2xl" />
+            </button>
+
+            {/* Modal Content */}
+            <div className="flex-1 overflow-y-auto p-8">
+              <div className="text-center mb-8">
+                <h2 className={`text-2xl md:text-3xl font-bold mb-2 ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>
+                  Select Vehicle Type
+                </h2>
+                <p className={`text-lg ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
+                  Choose your vehicle type to find washing & detailing centers
+                </p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {vehicleTypes.map((vehicle) => (
+                  <div
+                    key={vehicle.id}
+                    className={`${theme === 'light' ? 'bg-gray-100' : 'bg-gray-800'} rounded-xl p-6 text-center transition-all border-2 border-transparent group ${
+                      vehicle.available 
+                        ? `${theme === 'light' ? 'hover:bg-gray-200' : 'hover:bg-gray-700'} cursor-pointer transform hover:scale-105 hover:border-red-500` 
+                        : 'opacity-50 cursor-not-allowed'
+                    }`}
+                    onClick={() => handleVehicleTypeClick(vehicle)}
+                  >
+                    <div className={`text-6xl mb-4 transition-colors ${
+                      vehicle.available 
+                        ? 'group-hover:scale-110' 
+                        : ''
+                    }`} style={{ 
+                      background: vehicle.available 
+                        ? 'linear-gradient(135deg, #ff3864, #cc1e3a)' 
+                        : 'linear-gradient(135deg, #666, #999)',
+                      WebkitBackgroundClip: 'text', 
+                      WebkitTextFillColor: 'transparent', 
+                      backgroundClip: 'text' 
+                    }}>
+                      <FontAwesomeIcon icon={vehicle.icon} />
+                    </div>
+                    <h3 className={`text-lg font-bold mb-2 ${vehicle.available ? (theme === 'light' ? 'text-gray-900' : 'text-white') : 'text-gray-500'}`}>
+                      {vehicle.title}
+                    </h3>
+                    <p className={`text-base ${vehicle.available ? (theme === 'light' ? 'text-gray-700' : 'text-gray-400') : 'text-gray-600'}`}>
+                      {vehicle.description}
+                    </p>
+                    {!vehicle.available && (
+                      <div className="mt-2">
+                        <span className={`text-xs text-gray-500 px-2 py-1 rounded ${theme === 'light' ? 'bg-gray-200' : 'bg-gray-700'}`}>
+                          Coming Soon
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className={`${theme === 'light' ? 'bg-gray-100 border-gray-200' : 'bg-gray-800 border-gray-700'} px-6 py-3 border-t flex-shrink-0`}>
+              <p className={`text-center text-xs ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
+                Click on any vehicle type to find washing & detailing centers near you
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
     );
   }
 
   return (
     <div className={`min-h-screen ${theme === 'light' ? 'bg-white text-gray-900' : 'bg-black text-white'}`}>
-      {/* Header with Back Button */}
+      {/* Header with Back Button and Vehicle Type Selector */}
       <div className={`${theme === 'light' ? 'bg-gray-50 border-gray-200' : 'bg-gray-900 border-gray-800'} border-b py-4 px-4`}>
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
+        <div className="max-w-7xl mx-auto flex items-center justify-between flex-wrap gap-4">
           <button
             onClick={onBackToMain}
             className={`flex items-center transition-colors ${theme === 'light' ? 'text-gray-600 hover:text-red-600' : 'text-white hover:text-red-500'}`}
@@ -304,10 +407,32 @@ const WashingService = ({ selectedCity, onBackToMain, onWashingCenterClick, onSh
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
           </button>
-          <h1 className={`text-xl font-bold ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>
-            <FontAwesomeIcon icon={faSprayCan} className="mr-2" />
-            Washing & Detailing
-          </h1>
+          <div className="flex items-center gap-4 flex-1 justify-center">
+            <h1 className={`text-xl font-bold ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>
+              <FontAwesomeIcon icon={faSprayCan} className="mr-2" />
+              Washing & Detailing
+            </h1>
+            {selectedVehicleType && (
+              <button
+                onClick={() => setIsVehicleModalOpen(true)}
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-colors ${
+                  theme === 'light'
+                    ? 'bg-white border-gray-300 hover:bg-gray-50 text-gray-900'
+                    : 'bg-gray-800 border-gray-600 hover:bg-gray-700 text-white'
+                }`}
+              >
+                <FontAwesomeIcon 
+                  icon={selectedVehicleType === 'two-wheeler' ? faMotorcycle : faCar} 
+                  className="text-sm"
+                />
+                <span className="text-sm font-medium">
+                  {selectedVehicleType === 'two-wheeler' ? '2 Wheeler' : '4 Wheeler'}
+                </span>
+                <ChevronDownIcon className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+          <div className="w-5"></div> {/* Spacer for centering */}
         </div>
       </div>
 
@@ -316,9 +441,11 @@ const WashingService = ({ selectedCity, onBackToMain, onWashingCenterClick, onSh
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <h2 className={`text-2xl md:text-3xl font-bold mb-4 ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>
-              Washing & Detailing Centers Near You
+              {selectedVehicleType === 'two-wheeler' ? '2 Wheeler' : selectedVehicleType === 'four-wheeler' ? '4 Wheeler' : ''} Washing & Detailing Centers Near You
             </h2>
-            <p className={`text-lg ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>Find professional car wash and detailing services</p>
+            <p className={`text-lg ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
+              Find professional {selectedVehicleType === 'two-wheeler' ? 'bike' : selectedVehicleType === 'four-wheeler' ? 'car' : ''} wash and detailing services
+            </p>
           </div>
 
           {/* Mobile Filter and Sort Buttons - Outside of sidebar */}
@@ -422,192 +549,97 @@ const WashingService = ({ selectedCity, onBackToMain, onWashingCenterClick, onSh
                 </div>
 
                 <div className={`space-y-6 ${isFilterOpen ? 'block' : 'hidden lg:block'}`}>
-                  {/* Service Type Filter */}
+                  {/* Distance Filter */}
                   <div>
-                    <label className={`block text-sm font-medium mb-3 ${theme === 'light' ? 'text-gray-700' : 'text-gray-300'}`}>Service Type</label>
+                    <label className={`block text-sm font-medium mb-3 ${theme === 'light' ? 'text-gray-700' : 'text-gray-300'}`}>
+                      Maximum Distance
+                    </label>
                     <select
-                      value={serviceType}
-                      onChange={(e) => setServiceType(e.target.value)}
+                      value={distance}
+                      onChange={(e) => setDistance(e.target.value)}
                       className={`w-full rounded-lg px-3 py-2 border focus:outline-none focus:ring-2 focus:ring-red-500 ${
                         theme === 'light'
-                          ? 'bg-gray-50 text-gray-900 border-gray-300'
-                          : 'bg-gray-700 text-white border-gray-600'
+                          ? 'bg-white text-gray-900 border-gray-300'
+                          : 'bg-gray-800 text-white border-gray-600'
                       }`}
                     >
-                      <option value="all">All Services</option>
-                      <option value="basic-wash">Basic Wash</option>
-                      <option value="premium-detailing">Premium Detailing</option>
-                      <option value="ceramic-coating">Ceramic Coating</option>
-                      <option value="eco-friendly">Eco-Friendly</option>
-                      <option value="bike-specific">Bike Specific</option>
-                    </select>
-                  </div>
-
-                  {/* Price Range Filter */}
-                  <div>
-                    <label className={`block text-sm font-medium mb-3 ${theme === 'light' ? 'text-gray-700' : 'text-gray-300'}`}>Price Range</label>
-                    <select
-                      value={priceRange}
-                      onChange={(e) => setPriceRange(e.target.value)}
-                      className={`w-full rounded-lg px-3 py-2 border focus:outline-none focus:ring-2 focus:ring-red-500 ${
-                        theme === 'light'
-                          ? 'bg-gray-50 text-gray-900 border-gray-300'
-                          : 'bg-gray-700 text-white border-gray-600'
-                      }`}
-                    >
-                      <option value="all">All Prices</option>
-                      <option value="budget">Budget (₹99-₹299)</option>
-                      <option value="mid-range">Mid-Range (₹300-₹799)</option>
-                      <option value="premium">Premium (₹800+)</option>
+                      <option value="all">All Distances</option>
+                      <option value="1">Within 1 km</option>
+                      <option value="3">Within 3 km</option>
+                      <option value="5">Within 5 km</option>
+                      <option value="10">Within 10 km</option>
                     </select>
                   </div>
 
                   {/* Rating Filter */}
                   <div>
-                    <label className={`block text-sm font-medium mb-3 ${theme === 'light' ? 'text-gray-700' : 'text-gray-300'}`}>Minimum Rating</label>
+                    <label className={`block text-sm font-medium mb-3 ${theme === 'light' ? 'text-gray-700' : 'text-gray-300'}`}>
+                      Minimum Rating
+                    </label>
                     <select
                       value={rating}
                       onChange={(e) => setRating(e.target.value)}
                       className={`w-full rounded-lg px-3 py-2 border focus:outline-none focus:ring-2 focus:ring-red-500 ${
                         theme === 'light'
-                          ? 'bg-gray-50 text-gray-900 border-gray-300'
-                          : 'bg-gray-700 text-white border-gray-600'
+                          ? 'bg-white text-gray-900 border-gray-300'
+                          : 'bg-gray-800 text-white border-gray-600'
                       }`}
                     >
                       <option value="all">All Ratings</option>
                       <option value="4.5">4.5+ Stars</option>
                       <option value="4.0">4.0+ Stars</option>
                       <option value="3.5">3.5+ Stars</option>
+                      <option value="3.0">3.0+ Stars</option>
                     </select>
                   </div>
 
-                  {/* Sort By */}
-                  <div>
-                    <label className={`block text-sm font-medium mb-3 ${theme === 'light' ? 'text-gray-700' : 'text-gray-300'}`}>Sort By</label>
-                    <select
-                      value={sortBy}
-                      onChange={(e) => setSortBy(e.target.value)}
-                      className={`w-full rounded-lg px-3 py-2 border focus:outline-none focus:ring-2 focus:ring-red-500 ${
-                        theme === 'light'
-                          ? 'bg-gray-50 text-gray-900 border-gray-300'
-                          : 'bg-gray-700 text-white border-gray-600'
-                      }`}
-                    >
-                      <option value="distance">Distance</option>
-                      <option value="rating">Rating</option>
-                      <option value="name">Name</option>
-                    </select>
-                  </div>
+                  {/* Clear Filters */}
+                  <button
+                    onClick={() => {
+                      setRating('all');
+                      setDistance('all');
+                      setSortBy('distance');
+                    }}
+                    className={`w-full py-2 px-4 rounded-lg font-medium transition-colors ${
+                      theme === 'light'
+                        ? 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                        : 'bg-gray-700 text-white hover:bg-gray-600'
+                    }`}
+                  >
+                    Clear All Filters
+                  </button>
                 </div>
               </div>
             </div>
 
             {/* Washing Centers Grid */}
-            <div className={`${isFilterOpen ? 'lg:col-span-3' : 'col-span-1 lg:col-span-3'}`}>
-              {filteredCenters.length === 0 ? (
+            <div className={`${isFilterOpen && isMobile ? 'hidden' : 'block'} lg:col-span-3`}>
+              {/* Results Count */}
+              <div className="mb-6 flex justify-between items-center">
+                <div className={`text-sm ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
+                  {filteredGarages.length} {filteredGarages.length === 1 ? 'garage' : 'garages'} found
+                </div>
+              </div>
+
+              {filteredGarages.length === 0 && !loading ? (
                 <div className="text-center py-12">
                   <FontAwesomeIcon icon={faSprayCan} className={`text-6xl mb-4 ${theme === 'light' ? 'text-gray-400' : 'text-gray-600'}`} />
-                  <p className={`text-lg ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>No washing centers found matching your criteria.</p>
-                  <button
-                    onClick={() => {
-                      setServiceType('all');
-                      setPriceRange('all');
-                      setRating('all');
-                    }}
-                    className="mt-4 bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
-                  >
-                    Clear Filters
-                  </button>
+                  <p className={`text-lg mb-2 ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
+                    Coming Soon
+                  </p>
+                  <p className={`text-sm mb-4 ${theme === 'light' ? 'text-gray-500' : 'text-gray-500'}`}>
+                    Washing & Detailing services are not available in your area yet. Please check back later.
+                  </p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                  {filteredCenters.map((center) => (
-                    <div
-                      key={center.id}
-                      onClick={() => handleWashingCenterClick(center)}
-                      className={`rounded-xl overflow-hidden transition-all cursor-pointer transform hover:scale-105 border ${
-                        theme === 'light'
-                          ? 'bg-white border-gray-200 hover:border-gray-300 hover:shadow-md'
-                          : 'bg-gray-800 border-gray-700 hover:bg-gray-700'
-                      }`}
-                    >
-                      {/* Center Image */}
-                      <div className="relative h-48 w-full overflow-hidden">
-                        <img
-                          src={center.image}
-                          alt={center.name}
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            e.target.src = "https://images.pexels.com/photos/3807277/pexels-photo-3807277.jpeg";
-                          }}
-                        />
-                        <div className="absolute top-2 right-2 bg-black bg-opacity-70 text-white px-2 py-1 rounded text-xs font-semibold">
-                          {center.distance}km
-                        </div>
-                        <div className="absolute bottom-2 left-2 bg-red-600 text-white px-2 py-1 rounded text-xs font-semibold">
-                          {center.priceRange.charAt(0).toUpperCase() + center.priceRange.slice(1)}
-                        </div>
-                      </div>
-                      
-                      <div className="p-4">
-                        <div className="flex items-start justify-between mb-2">
-                          <h3 className={`text-lg font-semibold ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>{center.name}</h3>
-                          <div className="flex items-center">
-                            {renderStars(center.rating)}
-                            <span className={`ml-1 text-sm ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>({center.rating})</span>
-                          </div>
-                        </div>
-                        
-                        <div className={`flex items-center text-sm mb-2 ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
-                          <MapPinIcon className="w-4 h-4 mr-1" />
-                          <span>{center.location}</span>
-                        </div>
-                        
-                        <p className={`text-sm mb-3 ${theme === 'light' ? 'text-gray-700' : 'text-gray-300'}`}>{center.address}</p>
-                        
-                        <div className={`flex items-center text-sm mb-2 ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
-                          <ClockIcon className="w-4 h-4 mr-1" />
-                          <span>{center.operatingHours}</span>
-                        </div>
-                        
-                        <div className={`flex items-center text-sm mb-3 ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
-                          <PhoneIcon className="w-4 h-4 mr-1" />
-                          <span>{center.phone}</span>
-                        </div>
-                        
-                        <div className="mb-3">
-                          <h4 className={`text-sm font-semibold mb-2 ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>Services:</h4>
-                          <div className="flex flex-wrap gap-2">
-                            {center.services.slice(0, 2).map((service, index) => (
-                              <span
-                                key={index}
-                                className={`text-xs px-2 py-1 rounded ${
-                                  theme === 'light' ? 'bg-gray-100 text-gray-700' : 'bg-gray-700 text-gray-300'
-                                }`}
-                              >
-                                {service.name} - {service.price}
-                              </span>
-                            ))}
-                            {center.services.length > 2 && (
-                              <span className={`text-xs ${theme === 'light' ? 'text-gray-500' : 'text-gray-500'}`}>
-                                +{center.services.length - 2} more
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                        
-                        <p className={`text-sm mb-4 ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>{center.description}</p>
-                        
-                        <div className="flex items-center justify-end">
-                          <button 
-                            onClick={(e) => handleBookNow(e, center)}
-                            className="bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl text-sm"
-                          >
-                            Book Now
-                          </button>
-                        </div>
-                      </div>
-                    </div>
+                  {filteredGarages.map((garage) => (
+                    <GarageCard
+                      key={garage.id}
+                      garage={garage}
+                      onClick={() => handleGarageClick(garage)}
+                      onShowLoginPopup={onShowLoginPopup}
+                    />
                   ))}
                 </div>
               )}

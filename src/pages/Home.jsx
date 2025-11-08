@@ -20,6 +20,7 @@ import SixWheelerGarages from '../components/garageComponents/SixWheelerGarages'
 import GarageDetailPage from '../components/garageComponents/GarageDetailPage';
 import WashingService from '../components/washingComponents/WashingService';
 import EVService from '../components/evComponents/EVService';
+import EmergencyService from '../components/emergencyComponents/EmergencyService';
 import Footer from '../components/Footer';
 import ScrollToTop from '../components/ScrollToTop';
 import { fetchLandingPageData } from '../services/landingpage';
@@ -49,6 +50,7 @@ const Home = ({ setCurrentPage }) => {
   const [showGarageListing, setShowGarageListing] = useState(false);
   const [showWashingService, setShowWashingService] = useState(false);
   const [showEVService, setShowEVService] = useState(false);
+  const [showEmergencyService, setShowEmergencyService] = useState(false);
   const [selectedVehicleType, setSelectedVehicleType] = useState(null);
   const [selectedGarage, setSelectedGarage] = useState(null);
   const [showGarageDetail, setShowGarageDetail] = useState(false);
@@ -189,6 +191,8 @@ const Home = ({ setCurrentPage }) => {
       setShowWashingService(true);
     } else if (serviceType === 'ev-service') {
       setShowEVService(true);
+    } else if (serviceType === 'emergency') {
+      setShowEmergencyService(true);
     } else {
       // Show coming soon for other services
       alert(`${serviceType} service - Coming Soon!`);
@@ -230,6 +234,7 @@ const Home = ({ setCurrentPage }) => {
     setShowGarageListing(false);
     setShowWashingService(false);
     setShowEVService(false);
+    setShowEmergencyService(false);
     setSelectedVehicleType(null);
     setSelectedServiceId(null);
     // Scroll to top when going back to main page
@@ -301,7 +306,7 @@ const Home = ({ setCurrentPage }) => {
 
       {/* Main Content */}
       <main>
-        {!showGarageListing && !showWashingService && !showEVService ? (
+        {!showGarageListing && !showWashingService && !showEVService && !showEmergencyService ? (
           <>
             {/* Banner Carousel */}
             <BannerCarousel 
@@ -541,6 +546,13 @@ const Home = ({ setCurrentPage }) => {
             selectedCity={selectedCity}
             onBackToMain={backToMain}
             onEVGarageClick={handleGarageClick}
+            onShowLoginPopup={handleShowLoginPopup}
+          />
+        ) : showEmergencyService ? (
+          <EmergencyService
+            selectedCity={selectedCity}
+            onBackToMain={backToMain}
+            onEmergencyGarageClick={handleGarageClick}
             onShowLoginPopup={handleShowLoginPopup}
           />
         ) : showGarageDetail && selectedGarage ? (
