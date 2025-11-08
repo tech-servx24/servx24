@@ -1,5 +1,10 @@
 /* Custom styles for BannerCarousel navigation arrows */
 
+/* Ensure banner section height is respected */
+section[style*="50vh"] {
+  height: 50vh !important;
+}
+
 /* Ensure Swiper container and slides have proper dimensions */
 .swiper {
   width: 100% !important;

@@ -56,20 +56,20 @@ const ServiceCategories = forwardRef(({ onServiceClick }, ref) => {
       available: true
     },
     {
-      id: 2,
-      title: "3 Wheeler",
-      description: "Auto rickshaws, tuk-tuks",
-      icon: faCar,
-      type: 'three-wheeler',
-      available: false
-    },
-    {
       id: 3,
       title: "4 Wheeler",
       description: "Cars, SUVs, passenger vehicles",
       icon: faCar,
       type: 'four-wheeler',
       available: true
+    },
+    {
+      id: 2,
+      title: "3 Wheeler",
+      description: "Auto rickshaws, tuk-tuks",
+      icon: faCar,
+      type: 'three-wheeler',
+      available: false
     },
     {
       id: 4,

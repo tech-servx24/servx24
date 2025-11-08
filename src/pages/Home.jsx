@@ -538,7 +538,7 @@ const Home = ({ setCurrentPage }) => {
           <WashingService
             selectedCity={selectedCity}
             onBackToMain={backToMain}
-            onWashingCenterClick={() => {}} // No redirect to garage sections
+            onWashingCenterClick={handleGarageClick}
             onShowLoginPopup={handleShowWashingLoginPopup}
           />
         ) : showEVService ? (

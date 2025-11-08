@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronDownIcon, MapPinIcon, StarIcon } from '@heroicons/react/24/outline';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBolt } from '@fortawesome/free-solid-svg-icons';
+import { faBolt, faCar, faMotorcycle, faTimes } from '@fortawesome/free-solid-svg-icons';
 import GarageCard from '../homeComponents/GarageCard';
 import { getGaragesByServiceCategory } from '../../services/garageService';
 import { apiGet } from '../../utils/api';
@@ -30,6 +30,8 @@ const EVService = ({ selectedCity, onBackToMain, onEVGarageClick, onShowLoginPop
   const [isMobile, setIsMobile] = useState(false);
   const [evServiceCategoryId, setEvServiceCategoryId] = useState(null);
   const [error, setError] = useState(null);
+  const [isVehicleModalOpen, setIsVehicleModalOpen] = useState(true); // Show modal first
+  const [selectedVehicleType, setSelectedVehicleType] = useState(null);
 
   // Check if mobile
   useEffect(() => {
@@ -123,7 +125,7 @@ const EVService = ({ selectedCity, onBackToMain, onEVGarageClick, onShowLoginPop
 
   // Fetch EV garages when location and service category ID are ready
   useEffect(() => {
-    if (!locationReady || !evServiceCategoryId) return;
+    if (!locationReady || !evServiceCategoryId || isVehicleModalOpen) return;
 
     const fetchEVGarages = async () => {
       setLoading(true);
@@ -219,7 +221,7 @@ const EVService = ({ selectedCity, onBackToMain, onEVGarageClick, onShowLoginPop
     };
 
     fetchEVGarages();
-  }, [locationReady, selectedCity, evServiceCategoryId]);
+  }, [locationReady, selectedCity, evServiceCategoryId, isVehicleModalOpen]);
 
   // Apply filters and sorting
   useEffect(() => {
@@ -274,13 +276,50 @@ const EVService = ({ selectedCity, onBackToMain, onEVGarageClick, onShowLoginPop
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isSortOpen]);
 
+  // Vehicle types for EV service
+  const vehicleTypes = [
+    {
+      id: 1,
+      title: "2 Wheeler",
+      description: "Electric bikes, scooters, motorcycles",
+      icon: faMotorcycle,
+      type: 'two-wheeler',
+      available: true
+    },
+    {
+      id: 2,
+      title: "4 Wheeler",
+      description: "Electric cars, SUVs, passenger vehicles",
+      icon: faCar,
+      type: 'four-wheeler',
+      available: true
+    }
+  ];
+
+  // Handle vehicle type selection
+  const handleVehicleTypeClick = (vehicleType) => {
+    if (vehicleType.available) {
+      setSelectedVehicleType(vehicleType.type);
+      setIsVehicleModalOpen(false);
+    } else {
+      alert(`${vehicleType.title} service - Coming Soon!`);
+    }
+  };
+
+  const handleModalBackdropClick = (e) => {
+    if (e.target === e.currentTarget) {
+      // Don't allow closing by clicking backdrop - user must select a vehicle type
+      // setIsVehicleModalOpen(false);
+    }
+  };
+
   const handleGarageClick = (garage) => {
     if (onEVGarageClick) {
       onEVGarageClick(garage);
     }
   };
 
-  if (loading) {
+  if (loading && !isVehicleModalOpen) {
     return (
       <div className={`py-12 px-4 ${theme === 'light' ? 'bg-white' : 'bg-black'}`}>
         <div className="max-w-7xl mx-auto">
@@ -289,6 +328,108 @@ const EVService = ({ selectedCity, onBackToMain, onEVGarageClick, onShowLoginPop
             <p className={`mt-4 ${theme === 'light' ? 'text-gray-700' : 'text-gray-400'}`}>
               Loading EV service garages...
             </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show vehicle type selection modal first
+  if (isVehicleModalOpen) {
+    return (
+      <div className={`min-h-screen ${theme === 'light' ? 'bg-white text-gray-900' : 'bg-black text-white'}`}>
+        {/* Header with Back Button */}
+        <div className={`${theme === 'light' ? 'bg-gray-50 border-gray-200' : 'bg-gray-900 border-gray-800'} border-b py-4 px-4`}>
+          <div className="max-w-7xl mx-auto flex items-center justify-between">
+            <button
+              onClick={onBackToMain}
+              className={`flex items-center transition-colors ${theme === 'light' ? 'text-gray-600 hover:text-red-600' : 'text-white hover:text-red-500'}`}
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <h1 className={`text-xl font-bold ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>
+              <FontAwesomeIcon icon={faBolt} className="mr-2" />
+              EV Service
+            </h1>
+            <div className="w-5"></div> {/* Spacer for centering */}
+          </div>
+        </div>
+
+        {/* Vehicle Type Selection Modal */}
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4"
+          onClick={handleModalBackdropClick}
+        >
+          <div className={`${theme === 'light' ? 'bg-white' : 'bg-gray-900'} rounded-2xl shadow-2xl max-w-4xl w-full max-h-[85vh] flex flex-col relative`}>
+            {/* Close Button */}
+            <button
+              onClick={onBackToMain}
+              className={`absolute top-4 right-4 transition-colors p-2 z-10 ${theme === 'light' ? 'text-gray-900 hover:text-red-600' : 'text-white hover:text-red-200'}`}
+            >
+              <FontAwesomeIcon icon={faTimes} className="text-2xl" />
+            </button>
+
+            {/* Modal Content */}
+            <div className="flex-1 overflow-y-auto p-8">
+              <div className="text-center mb-8">
+                <h2 className={`text-2xl md:text-3xl font-bold mb-2 ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>
+                  Select Vehicle Type
+                </h2>
+                <p className={`text-lg ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
+                  Choose your vehicle type to find EV service garages
+                </p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {vehicleTypes.map((vehicle) => (
+                  <div
+                    key={vehicle.id}
+                    className={`${theme === 'light' ? 'bg-gray-100' : 'bg-gray-800'} rounded-xl p-6 text-center transition-all border-2 border-transparent group ${
+                      vehicle.available 
+                        ? `${theme === 'light' ? 'hover:bg-gray-200' : 'hover:bg-gray-700'} cursor-pointer transform hover:scale-105 hover:border-red-500` 
+                        : 'opacity-50 cursor-not-allowed'
+                    }`}
+                    onClick={() => handleVehicleTypeClick(vehicle)}
+                  >
+                    <div className={`text-6xl mb-4 transition-colors ${
+                      vehicle.available 
+                        ? 'group-hover:scale-110' 
+                        : ''
+                    }`} style={{ 
+                      background: vehicle.available 
+                        ? 'linear-gradient(135deg, #ff3864, #cc1e3a)' 
+                        : 'linear-gradient(135deg, #666, #999)',
+                      WebkitBackgroundClip: 'text', 
+                      WebkitTextFillColor: 'transparent', 
+                      backgroundClip: 'text' 
+                    }}>
+                      <FontAwesomeIcon icon={vehicle.icon} />
+                    </div>
+                    <h3 className={`text-lg font-bold mb-2 ${vehicle.available ? (theme === 'light' ? 'text-gray-900' : 'text-white') : 'text-gray-500'}`}>
+                      {vehicle.title}
+                    </h3>
+                    <p className={`text-base ${vehicle.available ? (theme === 'light' ? 'text-gray-700' : 'text-gray-400') : 'text-gray-600'}`}>
+                      {vehicle.description}
+                    </p>
+                    {!vehicle.available && (
+                      <div className="mt-2">
+                        <span className={`text-xs text-gray-500 px-2 py-1 rounded ${theme === 'light' ? 'bg-gray-200' : 'bg-gray-700'}`}>
+                          Coming Soon
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className={`${theme === 'light' ? 'bg-gray-100 border-gray-200' : 'bg-gray-800 border-gray-700'} px-6 py-3 border-t flex-shrink-0`}>
+              <p className={`text-center text-xs ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
+                Click on any vehicle type to find EV service garages near you
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -318,9 +459,9 @@ const EVService = ({ selectedCity, onBackToMain, onEVGarageClick, onShowLoginPop
 
   return (
     <div className={`min-h-screen ${theme === 'light' ? 'bg-white text-gray-900' : 'bg-black text-white'}`}>
-      {/* Header with Back Button */}
+      {/* Header with Back Button and Vehicle Type Selector */}
       <div className={`${theme === 'light' ? 'bg-gray-50 border-gray-200' : 'bg-gray-900 border-gray-800'} border-b py-4 px-4`}>
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
+        <div className="max-w-7xl mx-auto flex items-center justify-between flex-wrap gap-4">
           <button
             onClick={onBackToMain}
             className={`flex items-center transition-colors ${theme === 'light' ? 'text-gray-600 hover:text-red-600' : 'text-white hover:text-red-500'}`}
@@ -329,10 +470,31 @@ const EVService = ({ selectedCity, onBackToMain, onEVGarageClick, onShowLoginPop
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
           </button>
-          <h1 className={`text-xl font-bold ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>
-            <FontAwesomeIcon icon={faBolt} className="mr-2" />
-            EV Service Garages
-          </h1>
+          <div className="flex items-center gap-4 flex-1 justify-center">
+            <h1 className={`text-xl font-bold ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>
+              <FontAwesomeIcon icon={faBolt} className="mr-2" />
+              EV Service
+            </h1>
+            {selectedVehicleType && (
+              <button
+                onClick={() => setIsVehicleModalOpen(true)}
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-colors ${
+                  theme === 'light'
+                    ? 'bg-white border-gray-300 hover:bg-gray-50 text-gray-900'
+                    : 'bg-gray-800 border-gray-600 hover:bg-gray-700 text-white'
+                }`}
+              >
+                <FontAwesomeIcon 
+                  icon={selectedVehicleType === 'two-wheeler' ? faMotorcycle : faCar} 
+                  className="text-sm"
+                />
+                <span className="text-sm font-medium">
+                  {selectedVehicleType === 'two-wheeler' ? '2 Wheeler' : '4 Wheeler'}
+                </span>
+                <ChevronDownIcon className="w-4 h-4" />
+              </button>
+            )}
+          </div>
           <div className="w-5"></div> {/* Spacer for centering */}
         </div>
       </div>
@@ -342,10 +504,10 @@ const EVService = ({ selectedCity, onBackToMain, onEVGarageClick, onShowLoginPop
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <h2 className={`text-2xl md:text-3xl font-bold mb-4 ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>
-              EV Service Garages Near You
+              {selectedVehicleType === 'two-wheeler' ? '2 Wheeler' : selectedVehicleType === 'four-wheeler' ? '4 Wheeler' : ''} EV Service Garages Near You
             </h2>
             <p className={`text-lg ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
-              Find garages offering electric vehicle services
+              Find garages offering electric {selectedVehicleType === 'two-wheeler' ? 'bike' : selectedVehicleType === 'four-wheeler' ? 'car' : ''} services
             </p>
           </div>
 
