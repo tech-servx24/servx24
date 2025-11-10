@@ -7,7 +7,9 @@ import WashingService from '../components/washingComponents/WashingService';
 import EVService from '../components/evComponents/EVService';
 import EmergencyService from '../components/emergencyComponents/EmergencyService';
 import BuySellService from '../components/buySellComponents/BuySellService';
+import RentService from '../components/rentComponents/RentService';
 import VehicleDetailPage from '../components/buySellComponents/VehicleDetailPage';
+import RentVehicleDetailPage from '../components/rentComponents/RentVehicleDetailPage';
 import Footer from '../components/Footer';
 import ScrollToTop from '../components/ScrollToTop';
 import { fetchLandingPageData } from '../services/landingpage';
@@ -39,6 +41,8 @@ const Home = ({ setCurrentPage }) => {
   const [showEVService, setShowEVService] = useState(false);
   const [showEmergencyService, setShowEmergencyService] = useState(false);
   const [showBuySellService, setShowBuySellService] = useState(false);
+  const [showRentService, setShowRentService] = useState(false);
+  const [isRentVehicleDetail, setIsRentVehicleDetail] = useState(false);
   const [selectedVehicleType, setSelectedVehicleType] = useState(null);
   const [selectedGarage, setSelectedGarage] = useState(null);
   const [showGarageDetail, setShowGarageDetail] = useState(false);
@@ -185,6 +189,8 @@ const Home = ({ setCurrentPage }) => {
       setShowEmergencyService(true);
     } else if (serviceType === 'buy-sell') {
       setShowBuySellService(true);
+    } else if (serviceType === 'rent') {
+      setShowRentService(true);
     } else {
       // Show coming soon for other services
       alert(`${serviceType} service - Coming Soon!`);
@@ -210,15 +216,17 @@ const Home = ({ setCurrentPage }) => {
   };
 
   // Handle vehicle click from buy/sell service
-  const handleVehicleClick = (vehicle) => {
+  const handleVehicleClick = (vehicle, isRent = false) => {
     setSelectedVehicle(vehicle);
     setShowVehicleDetail(true);
+    setIsRentVehicleDetail(isRent);
   };
 
   // Close vehicle detail
   const closeVehicleDetail = () => {
     setShowVehicleDetail(false);
     setSelectedVehicle(null);
+    setIsRentVehicleDetail(false);
   };
 
   // Handle filter apply
@@ -240,6 +248,7 @@ const Home = ({ setCurrentPage }) => {
     setShowEVService(false);
     setShowEmergencyService(false);
     setShowBuySellService(false);
+    setShowRentService(false);
     setSelectedVehicleType(null);
     setSelectedServiceId(null);
     // Scroll to top when going back to main page
@@ -311,13 +320,13 @@ const Home = ({ setCurrentPage }) => {
 
       {/* Main Content */}
       <main>
-        {!showGarageListing && !showWashingService && !showEVService && !showEmergencyService && !showBuySellService ? (
+        {!showGarageListing && !showWashingService && !showEVService && !showEmergencyService && !showBuySellService && !showRentService ? (
           <LandingPage
             ref={serviceCategoriesRef}
-            banners={landingData.banners || []}
-            onFindGaragesClick={handleFindGaragesClick}
-            onServiceClick={handleServiceClick}
-          />
+              banners={landingData.banners || []} 
+              onFindGaragesClick={handleFindGaragesClick}
+              onServiceClick={handleServiceClick} 
+            />
         ) : showWashingService ? (
           <WashingService
             selectedCity={selectedCity}
@@ -344,6 +353,20 @@ const Home = ({ setCurrentPage }) => {
             selectedCity={selectedCity}
             onBackToMain={backToMain}
             onVehicleClick={handleVehicleClick}
+          />
+        ) : showRentService && !showVehicleDetail ? (
+          <RentService
+            selectedCity={selectedCity}
+            onBackToMain={backToMain}
+            onVehicleClick={handleVehicleClick}
+          />
+        ) : showVehicleDetail && selectedVehicle && isRentVehicleDetail ? (
+          <RentVehicleDetailPage
+            vehicle={selectedVehicle}
+            onClose={closeVehicleDetail}
+            onRentNow={(rentalData) => {
+              alert(`Rent ${rentalData.vehicle.brand} ${rentalData.vehicle.model} for ${rentalData.rentalType.toLowerCase()} rental (${rentalData.startDate} to ${rentalData.endDate}). Total: ₹${rentalData.price.toLocaleString()}. This feature will be implemented soon.`);
+            }}
           />
         ) : showVehicleDetail && selectedVehicle ? (
           <VehicleDetailPage
@@ -375,14 +398,14 @@ const Home = ({ setCurrentPage }) => {
           />
         ) : (
           <GarageListingPage
-            selectedCity={selectedCity}
-            filterData={filterData}
+                selectedCity={selectedCity}
+                filterData={filterData}
             selectedVehicleType={selectedVehicleType}
-            onGarageClick={handleGarageClick}
-            onBackToMain={backToMain}
-            onVehicleTypeChange={handleVehicleTypeChange}
-            onShowLoginPopup={handleShowLoginPopup}
-          />
+                onGarageClick={handleGarageClick}
+                onBackToMain={backToMain}
+                onVehicleTypeChange={handleVehicleTypeChange}
+                onShowLoginPopup={handleShowLoginPopup}
+            />
         )}
       </main>
 

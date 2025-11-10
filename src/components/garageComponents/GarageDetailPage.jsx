@@ -806,7 +806,7 @@ const GarageDetailPage = ({ garage, onClose, onBookNow }) => {
                       <div>
                         <h3 className={`text-base sm:text-lg md:text-lg font-bold ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>{engineType}</h3>
                         <p className={`text-xs sm:text-sm md:text-sm ${theme === 'light' ? 'text-gray-500' : 'text-gray-400'}`}>{serviceList?.length || 0} services available</p>
-                      </div>
+                    </div>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
                       {serviceList?.map((item, idx) => (
@@ -819,13 +819,13 @@ const GarageDetailPage = ({ garage, onClose, onBookNow }) => {
                           }`}
                         >
                           <div className="flex items-start justify-between mb-2 sm:mb-3">
-                            <div className="min-w-0 flex-1">
+                              <div className="min-w-0 flex-1">
                               <h4 className={`font-bold text-sm sm:text-base md:text-base mb-1 ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>{item.name}</h4>
-                              {item.description && (
+                                {item.description && (
                                 <p className={`text-xs sm:text-sm md:text-sm leading-relaxed ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>{item.description}</p>
-                              )}
+                                )}
+                              </div>
                             </div>
-                          </div>
                           <div className={`flex items-center justify-between pt-2 sm:pt-3 border-t ${
                             theme === 'light' ? 'border-gray-200' : 'border-gray-700'
                           }`}>
@@ -886,7 +886,7 @@ const GarageDetailPage = ({ garage, onClose, onBookNow }) => {
                               }`}
                             >
                               <div className="flex items-start justify-between mb-2 sm:mb-3">
-                                <div className="min-w-0 flex-1">
+                                  <div className="min-w-0 flex-1">
                                   <div className="flex items-center space-x-2 mb-1">
                                     <h4 className={`font-bold text-sm sm:text-base md:text-base ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>{item.name}</h4>
                                     <span className={`px-1.5 sm:px-2 py-0.5 rounded-full text-xs font-semibold ${
@@ -897,11 +897,11 @@ const GarageDetailPage = ({ garage, onClose, onBookNow }) => {
                                   </div>
                                   <p className={`text-xs sm:text-sm md:text-sm ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>Enhance your service experience</p>
                                 </div>
-                              </div>
+                                </div>
                               <div className={`flex items-center justify-between pt-2 sm:pt-3 border-t ${
                                 theme === 'light' ? 'border-purple-200' : 'border-purple-700/50'
                               }`}>
-                                <div className="flex items-center space-x-2">
+                              <div className="flex items-center space-x-2">
                                   <FontAwesomeIcon icon={faCheck} className={`w-3 h-3 sm:w-4 sm:h-4 ${theme === 'light' ? 'text-green-600' : 'text-green-400'}`} />
                                   <span className={`text-xs sm:text-sm md:text-sm font-medium ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>Add-on price</span>
                                 </div>

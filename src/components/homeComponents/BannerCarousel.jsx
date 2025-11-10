@@ -5,11 +5,20 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 import './BannerCarousel.css';
+import { ColorPalette } from '../../constants/designSystem';
 
 const BannerCarousel = ({ banners, onFindGaragesClick }) => {
   // Ensure banners is an array
   const bannerList = Array.isArray(banners) ? banners : [];
   const hasMultipleBanners = bannerList.length >= 2;
+
+  // Handle VIEW PRICES button click - scroll to pricing section or services
+  const handleViewPricesClick = () => {
+    const servicesSection = document.getElementById('services-section');
+    if (servicesSection) {
+      servicesSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   // If no banners, show a default banner
   if (bannerList.length === 0) {
@@ -28,22 +37,27 @@ const BannerCarousel = ({ banners, onFindGaragesClick }) => {
           </div>
           <div className="relative z-10 flex items-center justify-center h-full px-4 sm:px-6 md:px-8">
             <div className="max-w-4xl mx-auto text-center">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 leading-tight">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 leading-tight drop-shadow-lg">
                 <span className="text-white">Find Your</span>
                 <span className="text-cyan-400"> Perfect</span>
                 <span className="text-white"> Garage</span>
               </h1>
-              <p className="text-base sm:text-lg md:text-xl text-gray-300 mb-6 sm:mb-8 max-w-2xl mx-auto leading-relaxed">
+              <p className="text-base sm:text-lg md:text-xl text-gray-200 mb-6 sm:mb-8 max-w-2xl mx-auto leading-relaxed drop-shadow-md">
                 Professional vehicle service and maintenance at your fingertips
               </p>
               <div className="flex flex-row gap-2 sm:gap-3 justify-center">
                 <button 
                   onClick={onFindGaragesClick}
-                  className="bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 text-white font-semibold py-2 px-4 sm:py-2.5 sm:px-5 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl text-sm sm:text-base"
+                  className={`bg-gradient-to-r ${ColorPalette.primary.button.gradient} hover:${ColorPalette.primary.button.hover.gradient} text-white font-semibold py-2 px-4 sm:py-2.5 sm:px-5 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-black/50`}
+                  aria-label="Find garages near you"
                 >
                   FIND GARAGES
                 </button>
-                <button className="border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-black font-semibold py-2 px-4 sm:py-2.5 sm:px-5 rounded-lg transition-colors duration-200 border-2 text-sm sm:text-base">
+                <button 
+                  onClick={handleViewPricesClick}
+                  className="border-cyan-400 text-white hover:bg-cyan-400 hover:text-black font-semibold py-2 px-4 sm:py-2.5 sm:px-5 rounded-lg transition-colors duration-200 border-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-black/50"
+                  aria-label="View service prices"
+                >
                   VIEW PRICES
                 </button>
               </div>
@@ -76,6 +90,7 @@ const BannerCarousel = ({ banners, onFindGaragesClick }) => {
         allowTouchMove={true}
         className="h-full w-full"
         style={{ width: '100%', height: '100%' }}
+        aria-label="Banner carousel"
       >
         {bannerList.map((banner, index) => (
           <SwiperSlide key={banner.id || banner._id || index} style={{ width: '100%', height: '100%' }}>
@@ -93,7 +108,7 @@ const BannerCarousel = ({ banners, onFindGaragesClick }) => {
               </div>
               <div className="relative z-10 flex items-center justify-center h-full px-4 sm:px-6 md:px-8" style={{ width: '100%', height: '100%' }}>
                 <div className="max-w-4xl mx-auto text-center">
-                  <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 leading-tight">
+                  <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 leading-tight drop-shadow-lg">
                     {/* Use banner title if available, otherwise use default */}
                     {banner.title ? (
                       <>
@@ -109,18 +124,23 @@ const BannerCarousel = ({ banners, onFindGaragesClick }) => {
                       </>
                     )}
                   </h1>
-                  <p className="text-base sm:text-lg md:text-xl text-gray-300 mb-6 sm:mb-8 max-w-2xl mx-auto leading-relaxed">
+                  <p className="text-base sm:text-lg md:text-xl text-gray-200 mb-6 sm:mb-8 max-w-2xl mx-auto leading-relaxed drop-shadow-md">
                     {/* Use banner subtitle/description if available, otherwise use default */}
                     {banner.subtitle || banner.description || 'Professional vehicle service and maintenance at your fingertips'}
                   </p>
                   <div className="flex flex-row gap-2 sm:gap-3 justify-center">
                     <button 
                       onClick={onFindGaragesClick}
-                      className="bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 text-white font-semibold py-2 px-4 sm:py-2.5 sm:px-5 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl text-sm sm:text-base"
+                      className={`bg-gradient-to-r ${ColorPalette.primary.button.gradient} hover:${ColorPalette.primary.button.hover.gradient} text-white font-semibold py-2 px-4 sm:py-2.5 sm:px-5 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-black/50`}
+                      aria-label="Find garages near you"
                     >
                       FIND GARAGES
                     </button>
-                    <button className="border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-black font-semibold py-2 px-4 sm:py-2.5 sm:px-5 rounded-lg transition-colors duration-200 border-2 text-sm sm:text-base">
+                    <button 
+                      onClick={handleViewPricesClick}
+                      className="border-cyan-400 text-white hover:bg-cyan-400 hover:text-black font-semibold py-2 px-4 sm:py-2.5 sm:px-5 rounded-lg transition-colors duration-200 border-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-black/50"
+                      aria-label="View service prices"
+                    >
                       VIEW PRICES
                     </button>
                   </div>

@@ -137,38 +137,38 @@ const Login = ({ setCurrentPage, setIsLoggedIn }) => {
           subscriberId.toString(),
           finalBusinessId.toString()
         );
-        localStorage.setItem('mobileNumber', trimmedNumber);
-        setIsLoggedIn(true);
-        setSuccessMessage('Login successful!');
+      localStorage.setItem('mobileNumber', trimmedNumber);
+      setIsLoggedIn(true);
+      setSuccessMessage('Login successful!');
 
-        // Handle redirects consistent with previous flow
-        const urlParams = new URLSearchParams(window.location.search);
-        const returnTo = urlParams.get('returnTo');
-        const garageId = urlParams.get('garageId');
-        const vehicleType = urlParams.get('vehicleType');
+      // Handle redirects consistent with previous flow
+      const urlParams = new URLSearchParams(window.location.search);
+      const returnTo = urlParams.get('returnTo');
+      const garageId = urlParams.get('garageId');
+      const vehicleType = urlParams.get('vehicleType');
 
-        const bookingIntent = sessionStorage.getItem('bookingIntent');
-        let bookingData = null;
-        if (bookingIntent) {
-          try {
-            bookingData = JSON.parse(bookingIntent);
-            sessionStorage.removeItem('bookingIntent');
-          } catch (e) {
-            console.error('Error parsing booking intent:', e);
-          }
+      const bookingIntent = sessionStorage.getItem('bookingIntent');
+      let bookingData = null;
+      if (bookingIntent) {
+        try {
+          bookingData = JSON.parse(bookingIntent);
+          sessionStorage.removeItem('bookingIntent');
+        } catch (e) {
+          console.error('Error parsing booking intent:', e);
         }
+      }
 
-        setTimeout(() => {
-          if ((returnTo === 'booking' && garageId) || bookingData) {
-            const finalGarageId = garageId || bookingData?.garageId;
-            const finalVehicleType = vehicleType || bookingData?.vehicleType || 'two-wheeler';
-            window.location.href = `/booking?garageId=${finalGarageId}&returnTo=garage-list&vehicleType=${finalVehicleType}`;
-          } else if (returnTo === 'home' || bookingData?.returnTo === 'home') {
-            setCurrentPage('home');
-          } else {
-            setCurrentPage('profile');
-          }
-        }, 800);
+      setTimeout(() => {
+        if ((returnTo === 'booking' && garageId) || bookingData) {
+          const finalGarageId = garageId || bookingData?.garageId;
+          const finalVehicleType = vehicleType || bookingData?.vehicleType || 'two-wheeler';
+          window.location.href = `/booking?garageId=${finalGarageId}&returnTo=garage-list&vehicleType=${finalVehicleType}`;
+        } else if (returnTo === 'home' || bookingData?.returnTo === 'home') {
+          setCurrentPage('home');
+        } else {
+          setCurrentPage('profile');
+        }
+      }, 800);
       } else {
         setError(response.message || 'Invalid OTP. Please try again.');
       }

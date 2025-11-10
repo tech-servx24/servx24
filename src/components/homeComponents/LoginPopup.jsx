@@ -142,13 +142,13 @@ const LoginPopup = ({ isOpen, onClose, onLoginSuccess }) => {
           subscriberId.toString(),
           finalBusinessId.toString()
         );
-        localStorage.setItem('mobileNumber', trimmedNumber);
-        setSuccessMessage('Login successful!');
+      localStorage.setItem('mobileNumber', trimmedNumber);
+      setSuccessMessage('Login successful!');
 
-        setTimeout(() => {
-          onLoginSuccess();
-          onClose();
-        }, 600);
+      setTimeout(() => {
+        onLoginSuccess();
+        onClose();
+      }, 600);
       } else {
         setError(response.message || 'Invalid OTP. Please try again.');
       }

@@ -2,6 +2,7 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar, faCheck, faQuoteLeft } from '@fortawesome/free-solid-svg-icons';
 import { useTheme } from '../context/ThemeContext';
+import { BackgroundGradients } from '../../constants/designSystem';
 
 const CustomerReviewsSection = () => {
   const { theme } = useTheme();
@@ -50,7 +51,7 @@ const CustomerReviewsSection = () => {
   };
 
   return (
-    <section className={`py-8 md:py-12 px-4 relative ${theme === 'light' ? 'bg-white' : 'bg-black'}`}>
+    <section className={`py-12 md:py-16 lg:py-20 px-4 relative ${theme === 'light' ? BackgroundGradients.light.neutral : BackgroundGradients.dark.neutral}`} data-reviews-section>
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute inset-0" style={{
@@ -110,14 +111,9 @@ const CustomerReviewsSection = () => {
                 </p>
 
                 {/* Reviewer Info */}
-                <div className="flex items-center space-x-4">
-                  <img
-                    src={review.avatar}
-                    alt={review.name}
-                    className="w-12 h-12 rounded-full border-2 border-white shadow-lg"
-                  />
+                <div className="flex items-center justify-between">
                   <div className="flex-1">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between mb-1">
                       <h4 className={`font-semibold ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>
                         {review.name}
                       </h4>
@@ -139,20 +135,30 @@ const CustomerReviewsSection = () => {
         </div>
 
         {/* Overall Rating */}
-        <div className="text-center mt-16" data-aos="fade-up" data-aos-delay="600">
-          <div className={`inline-flex flex-col items-center px-12 py-8 rounded-2xl ${
-            theme === 'light' ? 'bg-white shadow-2xl' : 'bg-gray-800 shadow-2xl'
-          }`}>
-            <div className="flex items-center space-x-2 text-3xl mb-4">
+        <div className="text-center mt-12 md:mt-16" data-aos="fade-up" data-aos-delay="600">
+          <button
+            onClick={() => {
+              // Scroll to reviews section or expand all reviews
+              const reviewsSection = document.querySelector('[data-reviews-section]');
+              if (reviewsSection) {
+                reviewsSection.scrollIntoView({ behavior: 'smooth' });
+              }
+            }}
+            className={`inline-flex flex-col items-center px-8 md:px-12 py-6 md:py-8 rounded-2xl transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2 ${
+              theme === 'light' ? 'bg-white shadow-2xl hover:shadow-3xl' : 'bg-gray-800 shadow-2xl hover:shadow-3xl'
+            }`}
+            aria-label="View all customer reviews"
+          >
+            <div className="flex items-center space-x-2 text-2xl md:text-3xl mb-3 md:mb-4">
               {renderStars(5)}
-              <span className={`text-2xl font-bold ml-2 ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>
+              <span className={`text-xl md:text-2xl font-bold ml-2 ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>
                 4.8/5
               </span>
             </div>
-            <p className={`text-xl ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
+            <p className={`text-base md:text-lg lg:text-xl ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
               Based on 2,500+ customer reviews
             </p>
-          </div>
+          </button>
         </div>
       </div>
     </section>

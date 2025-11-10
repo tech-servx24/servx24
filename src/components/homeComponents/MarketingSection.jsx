@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTheme } from '../context/ThemeContext';
+import { ColorPalette, BackgroundGradients } from '../../constants/designSystem';
 
 const MarketingSection = ({ onExploreServicesClick }) => {
   const { theme } = useTheme();
@@ -15,8 +16,19 @@ const MarketingSection = ({ onExploreServicesClick }) => {
     }
   };
 
+  const handleLearnMoreClick = () => {
+    // Scroll to mission section
+    const missionSection = document.querySelector('[data-mission-section]');
+    if (missionSection) {
+      missionSection.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      // Fallback: scroll to bottom of page or about section
+      window.scrollBy({ top: window.innerHeight, behavior: 'smooth' });
+    }
+  };
+
   return (
-    <section className={`py-20 px-4 relative ${theme === 'light' ? 'bg-gradient-to-br from-white to-blue-50/30' : 'bg-gradient-to-br from-gray-900 to-blue-900/20'}`}>
+    <section className={`py-12 md:py-16 lg:py-20 px-4 relative ${theme === 'light' ? BackgroundGradients.light.primary : BackgroundGradients.dark.primary}`}>
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute inset-0" style={{
@@ -27,17 +39,17 @@ const MarketingSection = ({ onExploreServicesClick }) => {
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div data-aos="fade-right" data-aos-delay="200">
-            <h2 className={`text-4xl md:text-5xl lg:text-6xl font-bold mb-8 leading-tight ${
+            <h2 className={`text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight ${
               theme === 'light' 
                 ? 'text-gray-900' 
                 : 'text-white'
             }`}>
               Your Vehicle,{' '}
-              <span className="bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">
+              <span className={`bg-gradient-to-r ${ColorPalette.primary.gradient} bg-clip-text text-transparent`}>
                 Our Priority
               </span>
             </h2>
-            <p className={`text-xl md:text-2xl leading-relaxed mb-8 ${
+            <p className={`text-base md:text-lg lg:text-xl leading-relaxed mb-6 ${
               theme === 'light' ? 'text-gray-700' : 'text-gray-300'
             }`}>
               Whether you drive a bike, car, or commercial vehicle, we connect you with the best garages in your area. 
@@ -46,17 +58,20 @@ const MarketingSection = ({ onExploreServicesClick }) => {
             <div className="flex flex-col sm:flex-row gap-4">
               <button 
                 onClick={handleExploreClick}
-                className="premium-btn-lg group relative overflow-hidden"
+                className="premium-btn-lg group relative overflow-hidden focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
                 data-aos="zoom-in"
                 data-aos-delay="400"
+                aria-label="Explore our services"
               >
                 <span className="relative z-10">EXPLORE SERVICES</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-red-600 to-orange-600 group-hover:from-red-700 group-hover:to-orange-700 transition-all duration-300"></div>
+                <div className={`absolute inset-0 bg-gradient-to-r ${ColorPalette.primary.hover.gradient} group-hover:${ColorPalette.primary.button.hover.gradient} transition-all duration-300`}></div>
               </button>
               <button 
-                className="premium-outline-btn-lg group relative overflow-hidden"
+                onClick={handleLearnMoreClick}
+                className="premium-outline-btn-lg group relative overflow-hidden focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2"
                 data-aos="zoom-in"
                 data-aos-delay="500"
+                aria-label="Learn more about our platform"
               >
                 <span className="relative z-10">LEARN MORE</span>
                 <div className="absolute inset-0 border-2 border-cyan-400 rounded-xl group-hover:bg-cyan-400 group-hover:bg-opacity-10 transition-all duration-300"></div>
@@ -68,22 +83,23 @@ const MarketingSection = ({ onExploreServicesClick }) => {
             <div className="relative rounded-3xl overflow-hidden shadow-2xl transform hover:scale-105 transition-transform duration-500">
               <img
                 src="https://images.pexels.com/photos/13065690/pexels-photo-13065690.jpeg"
-                alt="Professional Garage Service"
+                alt="Professional garage service with mechanics working on vehicles"
                 className="w-full h-auto"
+                loading="lazy"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
             </div>
             
-            {/* Floating Stats */}
-            <div className="absolute -top-4 -left-4 bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-2xl" data-aos="fade-up" data-aos-delay="600">
+            {/* Floating Stats - Hidden on mobile, shown on larger screens */}
+            {/* <div className="hidden lg:block absolute -top-4 -left-4 bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-2xl" data-aos="fade-up" data-aos-delay="600">
               <div className="text-3xl font-bold text-gray-900">500+</div>
               <div className="text-gray-600">Verified Garages</div>
-            </div>
+            </div> */}
             
-            <div className="absolute -bottom-4 -right-4 bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-2xl" data-aos="fade-up" data-aos-delay="700">
+            {/* <div className="hidden lg:block absolute -bottom-4 -right-4 bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-2xl" data-aos="fade-up" data-aos-delay="700">
               <div className="text-3xl font-bold text-gray-900">24/7</div>
               <div className="text-gray-600">Support</div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

@@ -7,6 +7,7 @@ import CustomerReviewsSection from './CustomerReviewsSection';
 import MissionAndFeaturesSection from './MissionAndFeaturesSection';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import { ColorPalette } from '../../constants/designSystem';
 
 const LandingPage = forwardRef(({ 
   banners, 
@@ -25,11 +26,11 @@ const LandingPage = forwardRef(({
 
   return (
     <div className="landing-page relative overflow-hidden">
-      {/* Animated Background Elements */}
-      <div className="fixed inset-0 -z-10">
-        <div className="absolute top-1/4 -right-32 w-96 h-96 bg-gradient-to-br from-blue-100/40 to-purple-100/30 rounded-full blur-3xl animate-pulse-slow"></div>
-        <div className="absolute bottom-1/3 -left-32 w-80 h-80 bg-gradient-to-tr from-cyan-100/30 to-blue-100/40 rounded-full blur-3xl animate-pulse-slow delay-1000"></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-red-100/20 to-orange-100/20 rounded-full blur-3xl animate-pulse-slow delay-500"></div>
+      {/* Animated Background Elements - Optimized for performance */}
+      <div className="fixed inset-0 -z-10" style={{ willChange: 'transform' }}>
+        <div className="absolute top-1/4 -right-32 w-96 h-96 bg-gradient-to-br from-blue-100/40 to-purple-100/30 rounded-full blur-3xl animate-pulse-slow" style={{ willChange: 'opacity' }}></div>
+        <div className="absolute bottom-1/3 -left-32 w-80 h-80 bg-gradient-to-tr from-cyan-100/30 to-blue-100/40 rounded-full blur-3xl animate-pulse-slow" style={{ animationDelay: '1s', willChange: 'opacity' }}></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-red-100/20 to-orange-100/20 rounded-full blur-3xl animate-pulse-slow" style={{ animationDelay: '0.5s', willChange: 'opacity' }}></div>
       </div>
 
       {/* Banner Carousel */}

@@ -10,61 +10,70 @@ import {
   faCheckCircle
 } from '@fortawesome/free-solid-svg-icons';
 import { useTheme } from '../context/ThemeContext';
+import { ColorPalette, BackgroundGradients } from '../../constants/designSystem';
 
 const WhyChooseUsSection = () => {
   const { theme } = useTheme();
+
+  const handleJoinClick = () => {
+    // Scroll to services section
+    const servicesSection = document.getElementById('services-section');
+    if (servicesSection) {
+      servicesSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   const benefits = [
     {
       title: "Verified Garages",
       description: "All garages are verified and quality-checked",
       icon: faShieldAlt,
-      gradient: "from-blue-500 to-cyan-500",
+      gradient: ColorPalette.benefits.verified.gradient,
       stats: "500+ Verified"
     },
     {
       title: "Transparent Pricing",
       description: "No hidden costs, clear service breakdowns",
       icon: faDollarSign,
-      gradient: "from-green-500 to-emerald-500",
+      gradient: ColorPalette.benefits.pricing.gradient,
       stats: "0 Hidden Fees"
     },
     {
       title: "All Vehicle Types",
       description: "2 wheelers, 4 wheelers, and commercial vehicles",
       icon: faCar,
-      gradient: "from-purple-500 to-pink-500",
+      gradient: ColorPalette.benefits.vehicleTypes.gradient,
       stats: "4 Vehicle Types"
     },
     {
       title: "Real-time Updates",
       description: "Track your service progress live",
       icon: faClock,
-      gradient: "from-orange-500 to-red-500",
+      gradient: ColorPalette.benefits.updates.gradient,
       stats: "Live Tracking"
     },
     {
       title: "Customer Reviews",
       description: "Read genuine reviews from other customers",
       icon: faStar,
-      gradient: "from-yellow-500 to-amber-500",
+      gradient: ColorPalette.benefits.reviews.gradient,
       stats: "10K+ Reviews"
     },
     {
       title: "24/7 Support",
       description: "Round-the-clock customer assistance",
       icon: faMobileAlt,
-      gradient: "from-indigo-500 to-purple-500",
+      gradient: ColorPalette.benefits.support.gradient,
       stats: "24/7 Available"
     }
   ];
 
   return (
-    <section className={`py-8 md:py-12 px-4 relative ${theme === 'light' ? 'bg-white' : 'bg-black'}`}>
+    <section className={`py-12 md:py-16 lg:py-20 px-4 relative ${theme === 'light' ? BackgroundGradients.light.neutral : BackgroundGradients.dark.neutral}`}>
       {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-5">
+      <div className="absolute inset-0 opacity-10">
         <div className="absolute inset-0" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.4'%3E%3Cpath d='M50 50c0-5.523 4.477-10 10-10s10 4.477 10 10-4.477 10-10 10c0 5.523-4.477 10-10 10s-10-4.477-10-10 4.477-10 10-10zM10 10c0-5.523 4.477-10 10-10s10 4.477 10 10-4.477 10-10 10c0 5.523-4.477 10-10 10S0 25.523 0 20s4.477-10 10-10zm10 8c4.418 0 8-3.582 8-8s-3.582-8-8-8-8 3.582-8 8 3.582 8 8 8zm40 40c4.418 0 8-3.582 8-8s-3.582-8-8-8-8 3.582-8 8 3.582 8 8 8z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%239C92AC' fill-opacity='0.4' fill-rule='evenodd'/%3E%3C/svg%3E")`,
         }}></div>
       </div>
 
@@ -78,15 +87,15 @@ const WhyChooseUsSection = () => {
           </p>
         </div>
         
-        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {benefits.map((benefit, index) => (
             <div 
               key={index} 
-              className="group relative"
+              className="group relative flex"
               data-aos="fade-up"
               data-aos-delay={index * 100}
             >
-              <div className={`relative rounded-2xl p-8 text-center transition-all duration-500 transform group-hover:scale-105 group-hover:shadow-2xl ${
+              <div className={`relative rounded-2xl p-8 text-center transition-all duration-500 transform group-hover:scale-105 group-hover:shadow-2xl w-full flex flex-col h-full min-h-[320px] ${
                 theme === 'light' 
                   ? 'bg-white/80 backdrop-blur-sm border border-white/20 shadow-xl' 
                   : 'bg-gray-800/80 backdrop-blur-sm border border-gray-700/50 shadow-xl'
@@ -94,30 +103,32 @@ const WhyChooseUsSection = () => {
                 {/* Hover Gradient Background */}
                 <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${benefit.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500`}></div>
                 
-                {/* Icon Container */}
-                <div className={`relative inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-6 bg-gradient-to-br ${benefit.gradient} shadow-lg group-hover:shadow-xl transition-all duration-500`}>
-                  <FontAwesomeIcon 
-                    icon={benefit.icon} 
-                    className="text-2xl text-white" 
-                  />
-                </div>
-
                 {/* Stats Badge */}
-                <div className={`absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-semibold ${
+                <div className={`absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-semibold flex-shrink-0 z-10 ${
                   theme === 'light' ? 'bg-gray-100 text-gray-700' : 'bg-gray-700 text-gray-300'
                 }`}>
                   {benefit.stats}
                 </div>
 
-                <h3 className={`text-2xl font-bold mb-4 ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>
+                {/* Icon Container - Centered */}
+                <div className="flex justify-center mb-6 flex-shrink-0">
+                  <div className={`relative inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br ${benefit.gradient} shadow-lg group-hover:shadow-xl transition-all duration-500`}>
+                    <FontAwesomeIcon 
+                      icon={benefit.icon} 
+                      className="text-2xl text-white" 
+                    />
+                  </div>
+                </div>
+
+                <h3 className={`text-2xl font-bold mb-4 flex-shrink-0 ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>
                   {benefit.title}
                 </h3>
-                <p className={`text-lg leading-relaxed ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
+                <p className={`text-lg leading-relaxed flex-grow ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
                   {benefit.description}
                 </p>
 
                 {/* Animated Check Circle */}
-                <div className="mt-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                <div className="mt-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex-shrink-0 flex justify-center">
                   <FontAwesomeIcon 
                     icon={faCheckCircle} 
                     className={`text-2xl bg-gradient-to-br ${benefit.gradient} bg-clip-text text-transparent`}
@@ -129,18 +140,22 @@ const WhyChooseUsSection = () => {
         </div>
 
         {/* Bottom CTA */}
-        <div className="text-center mt-16" data-aos="fade-up" data-aos-delay="600">
-          <div className={`inline-flex items-center px-8 py-4 rounded-2xl ${
-            theme === 'light' ? 'bg-white shadow-2xl' : 'bg-gray-800 shadow-2xl'
-          }`}>
+        <div className="text-center mt-12 md:mt-16" data-aos="fade-up" data-aos-delay="600">
+          <button
+            onClick={handleJoinClick}
+            className={`inline-flex items-center px-6 md:px-8 py-3 md:py-4 rounded-2xl transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2 ${
+              theme === 'light' ? 'bg-white shadow-2xl hover:shadow-3xl' : 'bg-gray-800 shadow-2xl hover:shadow-3xl'
+            }`}
+            aria-label="Join our platform"
+          >
             <FontAwesomeIcon 
               icon={faStar} 
-              className="text-yellow-400 text-2xl mr-4"
+              className="text-yellow-400 text-xl md:text-2xl mr-3 md:mr-4"
             />
-            <span className={`text-xl font-semibold ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>
+            <span className={`text-base md:text-lg lg:text-xl font-semibold ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>
               Join 50,000+ satisfied customers today
             </span>
-          </div>
+          </button>
         </div>
       </div>
     </section>

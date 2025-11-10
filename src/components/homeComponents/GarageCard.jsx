@@ -64,7 +64,7 @@ const GarageCard = ({ garage, onClick, isExpanded = false, setCurrentPage, onSho
       <div className="p-4">
         <div className="flex items-start justify-between mb-2">
           <div className="flex items-center gap-2 flex-wrap">
-            <h3 className={`text-lg font-semibold ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>{garage.name}</h3>
+          <h3 className={`text-lg font-semibold ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>{garage.name}</h3>
             {garage.is_verified && (
               <div className="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center">
                 Verified <FontAwesomeIcon icon={faCheck} className="ml-1" />
