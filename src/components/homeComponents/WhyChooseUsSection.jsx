@@ -86,61 +86,9 @@ const WhyChooseUsSection = () => {
             Trusted by thousands of vehicle owners across India
           </p>
         </div>
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-          {benefits.map((benefit, index) => (
-            <div 
-              key={index} 
-              className="group relative flex"
-              data-aos="fade-up"
-              data-aos-delay={index * 100}
-            >
-              <div className={`relative rounded-2xl p-8 text-center transition-all duration-500 transform group-hover:scale-105 group-hover:shadow-2xl w-full flex flex-col h-full min-h-[320px] ${
-                theme === 'light' 
-                  ? 'bg-white/80 backdrop-blur-sm border border-white/20 shadow-xl' 
-                  : 'bg-gray-800/80 backdrop-blur-sm border border-gray-700/50 shadow-xl'
-              }`}>
-                {/* Hover Gradient Background */}
-                <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${benefit.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500`}></div>
-                
-                {/* Stats Badge */}
-                <div className={`absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-semibold flex-shrink-0 z-10 ${
-                  theme === 'light' ? 'bg-gray-100 text-gray-700' : 'bg-gray-700 text-gray-300'
-                }`}>
-                  {benefit.stats}
-                </div>
 
-                {/* Icon Container - Centered */}
-                <div className="flex justify-center mb-6 flex-shrink-0">
-                  <div className={`relative inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br ${benefit.gradient} shadow-lg group-hover:shadow-xl transition-all duration-500`}>
-                    <FontAwesomeIcon 
-                      icon={benefit.icon} 
-                      className="text-2xl text-white" 
-                    />
-                  </div>
-                </div>
-
-                <h3 className={`text-2xl font-bold mb-4 flex-shrink-0 ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>
-                  {benefit.title}
-                </h3>
-                <p className={`text-lg leading-relaxed flex-grow ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
-                  {benefit.description}
-                </p>
-
-                {/* Animated Check Circle */}
-                <div className="mt-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex-shrink-0 flex justify-center">
-                  <FontAwesomeIcon 
-                    icon={faCheckCircle} 
-                    className={`text-2xl bg-gradient-to-br ${benefit.gradient} bg-clip-text text-transparent`}
-                  />
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Bottom CTA */}
-        <div className="text-center mt-12 md:mt-16" data-aos="fade-up" data-aos-delay="600">
+        {/* CTA Button - Above Cards */}
+        <div className="text-center mb-8 md:mb-12" data-aos="fade-up" data-aos-delay="100">
           <button
             onClick={handleJoinClick}
             className={`inline-flex items-center px-6 md:px-8 py-3 md:py-4 rounded-2xl transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2 ${
@@ -156,6 +104,60 @@ const WhyChooseUsSection = () => {
               Join 50,000+ satisfied customers today
             </span>
           </button>
+        </div>
+        
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+          {benefits.map((benefit, index) => (
+            <div 
+              key={index} 
+              className="group relative flex"
+              data-aos="fade-up"
+              data-aos-delay={index * 100}
+            >
+              <div className={`relative rounded-2xl p-4 md:p-8 text-center transition-all duration-500 transform group-hover:scale-105 group-hover:shadow-2xl w-full flex flex-col h-full ${
+                theme === 'light' 
+                  ? 'bg-white/80 backdrop-blur-sm border border-white/20 shadow-xl' 
+                  : 'bg-gray-800/80 backdrop-blur-sm border border-gray-700/50 shadow-xl'
+              }`}>
+                {/* Hover Gradient Background */}
+                <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${benefit.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500`}></div>
+                
+                {/* Stats Badge - Above Icon */}
+                <div className="flex justify-center mb-2 md:mb-3 flex-shrink-0">
+                  <div className={`px-2 py-0.5 md:px-3 md:py-1 rounded-full text-[10px] md:text-xs font-semibold z-10 ${
+                    theme === 'light' ? 'bg-gray-100 text-gray-700' : 'bg-gray-700 text-gray-300'
+                  }`}>
+                    {benefit.stats}
+                  </div>
+                </div>
+
+                {/* Icon Container - Centered */}
+                <div className="flex justify-center mb-3 md:mb-6 flex-shrink-0">
+                  <div className={`relative inline-flex items-center justify-center w-12 h-12 md:w-20 md:h-20 rounded-xl md:rounded-2xl bg-gradient-to-br ${benefit.gradient} shadow-lg group-hover:shadow-xl transition-all duration-500`}>
+                    <FontAwesomeIcon 
+                      icon={benefit.icon} 
+                      className="text-lg md:text-2xl text-white" 
+                    />
+                  </div>
+                </div>
+
+                <h3 className={`text-base md:text-2xl font-bold mb-2 md:mb-4 flex-shrink-0 ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>
+                  {benefit.title}
+                </h3>
+                <p className={`text-xs md:text-lg leading-relaxed flex-grow ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
+                  {benefit.description}
+                </p>
+
+                {/* Animated Check Circle */}
+                <div className="mt-3 md:mt-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex-shrink-0 flex justify-center">
+                  <FontAwesomeIcon 
+                    icon={faCheckCircle} 
+                    className={`text-lg md:text-2xl bg-gradient-to-br ${benefit.gradient} bg-clip-text text-transparent`}
+                  />
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>

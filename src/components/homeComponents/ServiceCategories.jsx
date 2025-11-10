@@ -175,16 +175,16 @@ const ServiceCategories = forwardRef(({ onServiceClick }, ref) => {
           </p>
         </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
           {serviceCategories.map((category, index) => (
             <div 
               key={category.id} 
-              className="relative group"
+              className="relative group flex"
               data-aos="fade-up"
               data-aos-delay={index * 100}
             >
               <div
-                className={`relative rounded-xl p-6 text-center transition-all duration-500 cursor-pointer transform group-hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 ${
+                className={`relative rounded-xl p-4 md:p-6 text-center transition-all duration-500 cursor-pointer transform group-hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 w-full flex flex-col h-full ${
                   theme === 'light' 
                     ? 'bg-white border border-gray-200 hover:border-gray-300 hover:shadow-md' 
                     : 'bg-gray-800 border border-gray-700 hover:bg-gray-700'
@@ -201,24 +201,26 @@ const ServiceCategories = forwardRef(({ onServiceClick }, ref) => {
                 aria-label={`${category.title} - ${category.description}`}
               >
                 {/* Icon with Gradient */}
-                <div className={`relative inline-flex items-center justify-center w-12 h-12 md:w-14 md:h-14 rounded-xl mb-3 md:mb-4 bg-gradient-to-br ${category.gradient} shadow-lg transition-all duration-500`}>
-                  <FontAwesomeIcon 
-                    icon={category.icon} 
-                    className="text-xl md:text-2xl text-white" 
-                  />
+                <div className="flex justify-center mb-2 md:mb-4 flex-shrink-0">
+                  <div className={`relative inline-flex items-center justify-center w-10 h-10 md:w-14 md:h-14 rounded-xl bg-gradient-to-br ${category.gradient} shadow-lg transition-all duration-500`}>
+                    <FontAwesomeIcon 
+                      icon={category.icon} 
+                      className="text-lg md:text-2xl text-white" 
+                    />
+                  </div>
                 </div>
 
-                <h3 className={`text-base md:text-lg font-semibold mb-2 ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>
+                <h3 className={`text-sm md:text-lg font-semibold mb-1 md:mb-2 flex-shrink-0 ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>
                   {category.title}
                 </h3>
-                <p className={`text-xs md:text-sm mb-4 ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
+                <p className={`text-xs md:text-sm mb-3 md:mb-4 flex-grow ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
                   {category.description}
                 </p>
                 
-                <div className="mt-auto">
+                <div className="mt-auto flex-shrink-0">
                   {category.available ? (
                     <button 
-                      className={`premium-btn w-full group relative overflow-hidden rounded-xl bg-gradient-to-r ${
+                      className={`w-full group relative overflow-hidden rounded-xl bg-gradient-to-r px-3 py-2 md:px-6 md:py-3 text-xs md:text-base font-semibold text-white transition-all duration-300 transform hover:scale-105 hover:shadow-xl ${
                         category.hasDropdown ? ColorPalette.secondary.gradient : ColorPalette.primary.gradient
                       }`}
                     >
@@ -228,7 +230,7 @@ const ServiceCategories = forwardRef(({ onServiceClick }, ref) => {
                       <div className="absolute inset-0 bg-gradient-to-r opacity-0 group-hover:opacity-100 transition-all duration-300 from-white/20 to-white/10"></div>
                     </button>
                   ) : (
-                    <span className={`px-4 py-2 rounded-lg ${theme === 'light' ? 'bg-gray-100 text-gray-500' : 'bg-gray-700 text-gray-400'}`}>
+                    <span className={`px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-xs md:text-sm ${theme === 'light' ? 'bg-gray-100 text-gray-500' : 'bg-gray-700 text-gray-400'}`}>
                       Coming Soon
                     </span>
                   )}

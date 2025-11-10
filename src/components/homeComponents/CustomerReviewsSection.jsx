@@ -40,12 +40,12 @@ const CustomerReviewsSection = () => {
     }
   ];
 
-  const renderStars = (rating) => {
+  const renderStars = (rating, size = "text-sm md:text-lg") => {
     return Array.from({ length: 5 }, (_, i) => (
       <FontAwesomeIcon 
         key={i}
         icon={faStar} 
-        className={i < rating ? "text-yellow-400" : "text-gray-300"}
+        className={`${size} ${i < rating ? "text-yellow-400" : "text-gray-300"}`}
       />
     ));
   };
@@ -68,60 +68,87 @@ const CustomerReviewsSection = () => {
             Real reviews from real customers across India
           </p>
         </div>
+
+        {/* Overall Rating - Above Reviews */}
+        <div className="text-center mb-8 md:mb-12" data-aos="fade-up" data-aos-delay="100">
+          <button
+            onClick={() => {
+              // Scroll to reviews section or expand all reviews
+              const reviewsSection = document.querySelector('[data-reviews-section]');
+              if (reviewsSection) {
+                reviewsSection.scrollIntoView({ behavior: 'smooth' });
+              }
+            }}
+            className={`inline-flex flex-col items-center px-6 md:px-12 py-4 md:py-8 rounded-xl md:rounded-2xl transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2 ${
+              theme === 'light' ? 'bg-white shadow-2xl hover:shadow-3xl' : 'bg-gray-800 shadow-2xl hover:shadow-3xl'
+            }`}
+            aria-label="View all customer reviews"
+          >
+            <div className="flex items-center space-x-1 md:space-x-2 mb-2 md:mb-4">
+              {renderStars(5, "text-base md:text-3xl")}
+              <span className={`text-base md:text-2xl font-bold ml-1 md:ml-2 ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>
+                4.8/5
+              </span>
+            </div>
+            <p className={`text-xs md:text-lg lg:text-xl ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
+              Based on 2,500+ customer reviews
+            </p>
+          </button>
+        </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {reviews.map((review, index) => (
             <div 
               key={index}
-              className="group relative"
+              className="group relative flex"
               data-aos="fade-up"
               data-aos-delay={index * 200}
             >
-              <div className={`relative rounded-2xl p-8 transition-all duration-500 transform group-hover:scale-105 group-hover:shadow-2xl ${
+              <div className={`relative rounded-2xl p-4 md:p-8 transition-all duration-500 transform group-hover:scale-105 group-hover:shadow-2xl w-full flex flex-col h-full ${
                 theme === 'light' 
                   ? 'bg-white/80 backdrop-blur-sm border border-white/20 shadow-xl' 
                   : 'bg-gray-800/80 backdrop-blur-sm border border-gray-700/50 shadow-xl'
               }`}>
                 {/* Quote Icon */}
-                <div className="absolute top-6 left-6 opacity-10">
+                <div className="absolute top-3 left-3 md:top-6 md:left-6 opacity-10">
                   <FontAwesomeIcon 
                     icon={faQuoteLeft} 
-                    className="text-6xl text-gray-400"
+                    className="text-3xl md:text-6xl text-gray-400"
                   />
                 </div>
 
                 {/* Rating */}
-                <div className="flex items-center justify-between mb-6">
-                  <div className="flex items-center space-x-1 text-lg">
-                    {renderStars(review.rating)}
+                <div className="flex items-center justify-between mb-3 md:mb-6 flex-shrink-0">
+                  <div className="flex items-center space-x-0.5 md:space-x-1">
+                    {renderStars(review.rating, "text-xs md:text-lg")}
                   </div>
                   {review.verified && (
-                    <span className="flex items-center text-green-500 text-sm font-semibold">
-                      <FontAwesomeIcon icon={faCheck} className="mr-1" />
+                    <span className="flex items-center text-green-500 text-xs md:text-sm font-semibold">
+                      <FontAwesomeIcon icon={faCheck} className="mr-1 text-xs md:text-sm" />
                       Verified
                     </span>
                   )}
                 </div>
 
                 {/* Review Text */}
-                <p className={`text-lg leading-relaxed mb-6 relative z-10 ${
+                <p className={`text-sm md:text-lg leading-relaxed mb-4 md:mb-6 relative z-10 flex-grow ${
                   theme === 'light' ? 'text-gray-700' : 'text-gray-300'
                 }`}>
                   "{review.comment}"
                 </p>
 
                 {/* Reviewer Info */}
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between flex-shrink-0">
                   <div className="flex-1">
                     <div className="flex items-center justify-between mb-1">
-                      <h4 className={`font-semibold ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>
+                      <h4 className={`text-sm md:text-base font-semibold ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>
                         {review.name}
                       </h4>
-                      <span className={`text-sm ${theme === 'light' ? 'text-gray-500' : 'text-gray-400'}`}>
+                      <span className={`text-xs md:text-sm ${theme === 'light' ? 'text-gray-500' : 'text-gray-400'}`}>
                         {review.timestamp}
                       </span>
                     </div>
-                    <p className={`text-sm ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
+                    <p className={`text-xs md:text-sm ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
                       {review.location} • {review.vehicle}
                     </p>
                   </div>
@@ -132,33 +159,6 @@ const CustomerReviewsSection = () => {
               </div>
             </div>
           ))}
-        </div>
-
-        {/* Overall Rating */}
-        <div className="text-center mt-12 md:mt-16" data-aos="fade-up" data-aos-delay="600">
-          <button
-            onClick={() => {
-              // Scroll to reviews section or expand all reviews
-              const reviewsSection = document.querySelector('[data-reviews-section]');
-              if (reviewsSection) {
-                reviewsSection.scrollIntoView({ behavior: 'smooth' });
-              }
-            }}
-            className={`inline-flex flex-col items-center px-8 md:px-12 py-6 md:py-8 rounded-2xl transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2 ${
-              theme === 'light' ? 'bg-white shadow-2xl hover:shadow-3xl' : 'bg-gray-800 shadow-2xl hover:shadow-3xl'
-            }`}
-            aria-label="View all customer reviews"
-          >
-            <div className="flex items-center space-x-2 text-2xl md:text-3xl mb-3 md:mb-4">
-              {renderStars(5)}
-              <span className={`text-xl md:text-2xl font-bold ml-2 ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>
-                4.8/5
-              </span>
-            </div>
-            <p className={`text-base md:text-lg lg:text-xl ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
-              Based on 2,500+ customer reviews
-            </p>
-          </button>
         </div>
       </div>
     </section>

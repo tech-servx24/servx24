@@ -31,7 +31,7 @@ const MissionAndFeaturesSection = () => {
   ];
 
   return (
-    <section className={`py-16 md:py-20 lg:py-24 px-4 relative ${theme === 'light' ? 'bg-gray-50' : 'bg-gray-900'}`} data-mission-section>
+    <section className={`py-12 md:py-20 lg:py-24 px-4 relative ${theme === 'light' ? 'bg-gray-50' : 'bg-gray-900'}`} data-mission-section>
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute inset-0" style={{
@@ -41,19 +41,19 @@ const MissionAndFeaturesSection = () => {
 
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Unified Header Section */}
-        <div className="text-center mb-16" data-aos="fade-up">
-          <div className="inline-flex items-center justify-center mb-6">
-            <div className={`w-16 h-16 rounded-2xl bg-gradient-to-r ${ColorPalette.primary.gradient} flex items-center justify-center mr-4`}>
-              <FontAwesomeIcon icon={faRocket} className="text-white text-2xl" />
+        <div className="text-center mb-8 md:mb-16" data-aos="fade-up">
+          <div className="inline-flex flex-col md:flex-row items-center justify-center mb-4 md:mb-6">
+            <div className={`w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl bg-gradient-to-r ${ColorPalette.primary.gradient} flex items-center justify-center mb-3 md:mb-0 md:mr-4`}>
+              <FontAwesomeIcon icon={faRocket} className="text-white text-lg md:text-2xl" />
             </div>
-            <h2 className={`text-4xl md:text-5xl lg:text-6xl font-bold ${
+            <h2 className={`text-2xl md:text-5xl lg:text-6xl font-bold ${
               theme === 'light' ? 'text-gray-900' : 'text-white'
             }`}>
               Our Mission
             </h2>
           </div>
           
-          <p className={`max-w-4xl mx-auto text-lg md:text-xl lg:text-2xl leading-relaxed ${
+          <p className={`max-w-4xl mx-auto text-sm md:text-xl lg:text-2xl leading-relaxed ${
             theme === 'light' ? 'text-gray-600' : 'text-gray-300'
           }`}>
             Revolutionizing how vehicle owners find and connect with trusted garages. 
@@ -61,24 +61,24 @@ const MissionAndFeaturesSection = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 lg:gap-16 items-start">
           {/* Left Column - Mission & Stats */}
-          <div className="space-y-12" data-aos="fade-right">
+          <div className="space-y-8 md:space-y-12" data-aos="fade-right">
             {/* Mission Details */}
-            <div className={`rounded-3xl p-8 ${
+            <div className={`rounded-2xl md:rounded-3xl p-4 md:p-8 ${
               theme === 'light' 
                 ? 'bg-white shadow-2xl border border-gray-100' 
                 : 'bg-gray-800 shadow-2xl border border-gray-700'
             }`}>
-              <div className="space-y-6">
-                <p className={`text-base md:text-lg leading-relaxed ${
+              <div className="space-y-4 md:space-y-6">
+                <p className={`text-sm md:text-lg leading-relaxed ${
                   theme === 'light' ? 'text-gray-700' : 'text-gray-300'
                 }`}>
                   Whether you own a bike, car, or commercial vehicle, our platform makes it easy to find 
                   verified garages near you with transparent pricing and quality-assured service.
                 </p>
                 
-                <p className={`text-base md:text-lg leading-relaxed ${
+                <p className={`text-sm md:text-lg leading-relaxed ${
                   theme === 'light' ? 'text-gray-700' : 'text-gray-300'
                 }`}>
                   Our comprehensive verification system ensures every garage meets high standards for 
@@ -88,30 +88,30 @@ const MissionAndFeaturesSection = () => {
               </div>
 
               {/* Trust Indicators */}
-              <div className="flex flex-wrap gap-6 pt-8 mt-8 border-t border-gray-200 dark:border-gray-700">
-                <div className="flex items-center space-x-3">
-                  <div className={`w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center`}>
-                    <FontAwesomeIcon icon={faUsers} className="text-blue-600 dark:text-blue-400 text-lg" />
+              <div className="flex flex-wrap gap-4 md:gap-6 pt-6 md:pt-8 mt-6 md:mt-8 border-t border-gray-200 dark:border-gray-700">
+                <div className="flex items-center space-x-2 md:space-x-3">
+                  <div className={`w-10 h-10 md:w-12 md:h-12 rounded-lg md:rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center`}>
+                    <FontAwesomeIcon icon={faUsers} className="text-blue-600 dark:text-blue-400 text-sm md:text-lg" />
                   </div>
                   <div>
-                    <div className={`font-semibold ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>
+                    <div className={`text-sm md:text-base font-semibold ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>
                       Trusted Community
                     </div>
-                    <div className={`text-sm ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
+                    <div className={`text-xs md:text-sm ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
                       Thousands served
                     </div>
                   </div>
                 </div>
                 
-                <div className="flex items-center space-x-3">
-                  <div className={`w-12 h-12 rounded-xl bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center`}>
-                    <FontAwesomeIcon icon={faAward} className="text-yellow-600 dark:text-yellow-400 text-lg" />
+                <div className="flex items-center space-x-2 md:space-x-3">
+                  <div className={`w-10 h-10 md:w-12 md:h-12 rounded-lg md:rounded-xl bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center`}>
+                    <FontAwesomeIcon icon={faAward} className="text-yellow-600 dark:text-yellow-400 text-sm md:text-lg" />
                   </div>
                   <div>
-                    <div className={`font-semibold ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>
+                    <div className={`text-sm md:text-base font-semibold ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>
                       Quality Assured
                     </div>
-                    <div className={`text-sm ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
+                    <div className={`text-xs md:text-sm ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
                       Verified excellence
                     </div>
                   </div>
@@ -120,11 +120,11 @@ const MissionAndFeaturesSection = () => {
             </div>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-2 gap-4 md:gap-6">
               {stats.map((stat, index) => (
                 <div 
                   key={index}
-                  className={`text-center p-6 rounded-2xl transition-all duration-500 transform hover:scale-105 ${
+                  className={`text-center p-4 md:p-6 rounded-xl md:rounded-2xl transition-all duration-500 transform hover:scale-105 ${
                     theme === 'light' 
                       ? 'bg-white shadow-xl hover:shadow-2xl border border-gray-100' 
                       : 'bg-gray-800 shadow-xl hover:shadow-2xl border border-gray-700'
@@ -132,13 +132,13 @@ const MissionAndFeaturesSection = () => {
                   data-aos="zoom-in"
                   data-aos-delay={index * 100}
                 >
-                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${ColorPalette.primary.gradient} flex items-center justify-center mx-auto mb-4`}>
-                    <FontAwesomeIcon icon={stat.icon} className="text-white text-lg" />
+                  <div className={`w-10 h-10 md:w-12 md:h-12 rounded-lg md:rounded-xl bg-gradient-to-r ${ColorPalette.primary.gradient} flex items-center justify-center mx-auto mb-3 md:mb-4`}>
+                    <FontAwesomeIcon icon={stat.icon} className="text-white text-sm md:text-lg" />
                   </div>
-                  <div className={`text-2xl md:text-3xl font-bold mb-2 bg-gradient-to-r ${ColorPalette.primary.gradient} bg-clip-text text-transparent`}>
+                  <div className={`text-xl md:text-3xl font-bold mb-1 md:mb-2 bg-gradient-to-r ${ColorPalette.primary.gradient} bg-clip-text text-transparent`}>
                     {stat.number}
                   </div>
-                  <div className={`text-base ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
+                  <div className={`text-xs md:text-base ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
                     {stat.label}
                   </div>
                 </div>
@@ -148,27 +148,27 @@ const MissionAndFeaturesSection = () => {
 
           {/* Right Column - Features Card */}
           <div data-aos="fade-left" data-aos-delay="200">
-            <div className={`relative rounded-3xl p-8 h-full ${
+            <div className={`relative rounded-2xl md:rounded-3xl p-4 md:p-8 h-full ${
               theme === 'light' 
                 ? 'bg-gradient-to-br from-white to-blue-50 shadow-2xl border border-gray-100' 
                 : 'bg-gradient-to-br from-gray-800 to-gray-900 shadow-2xl border border-gray-700'
             }`}>
               {/* Decorative Elements */}
-              <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${ColorPalette.primary.gradient} opacity-10 rounded-full -translate-y-16 translate-x-16`}></div>
-              <div className={`absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-br ${ColorPalette.secondary.gradient} opacity-10 rounded-full translate-y-16 -translate-x-16`}></div>
+              <div className={`absolute top-0 right-0 w-20 h-20 md:w-32 md:h-32 bg-gradient-to-br ${ColorPalette.primary.gradient} opacity-10 rounded-full -translate-y-10 translate-x-10 md:-translate-y-16 md:translate-x-16`}></div>
+              <div className={`absolute bottom-0 left-0 w-16 h-16 md:w-24 md:h-24 bg-gradient-to-br ${ColorPalette.secondary.gradient} opacity-10 rounded-full translate-y-10 -translate-x-10 md:translate-y-16 md:-translate-x-16`}></div>
               
-              <div className="flex items-center mb-8">
-                <div className={`w-16 h-16 rounded-2xl bg-gradient-to-r ${ColorPalette.secondary.gradient} flex items-center justify-center mr-4`}>
-                  <FontAwesomeIcon icon={faHeart} className="text-white text-2xl" />
+              <div className="flex items-center mb-6 md:mb-8">
+                <div className={`w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl bg-gradient-to-r ${ColorPalette.secondary.gradient} flex items-center justify-center mr-3 md:mr-4`}>
+                  <FontAwesomeIcon icon={faHeart} className="text-white text-lg md:text-2xl" />
                 </div>
-                <h3 className={`text-3xl md:text-4xl font-bold ${
+                <h3 className={`text-xl md:text-4xl font-bold ${
                   theme === 'light' ? 'text-gray-900' : 'text-white'
                 }`}>
                   Why Choose Us
                 </h3>
               </div>
               
-              <ul className="space-y-5 mb-12">
+              <ul className="space-y-3 md:space-y-5 mb-8 md:mb-12">
                 {features.map((feature, index) => (
                   <li 
                     key={index}
@@ -176,10 +176,10 @@ const MissionAndFeaturesSection = () => {
                     data-aos="fade-up"
                     data-aos-delay={index * 100 + 300}
                   >
-                    <div className={`flex-shrink-0 w-10 h-10 rounded-xl bg-gradient-to-r ${ColorPalette.success.gradient} flex items-center justify-center mr-4 mt-1 group-hover:scale-110 transition-transform duration-300`}>
-                      <FontAwesomeIcon icon={faCheck} className="text-white text-sm" />
+                    <div className={`flex-shrink-0 w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl bg-gradient-to-r ${ColorPalette.success.gradient} flex items-center justify-center mr-3 md:mr-4 mt-0.5 md:mt-1 group-hover:scale-110 transition-transform duration-300`}>
+                      <FontAwesomeIcon icon={faCheck} className="text-white text-xs md:text-sm" />
                     </div>
-                    <span className={`text-lg md:text-xl pt-1 group-hover:translate-x-2 transition-transform duration-300 ${
+                    <span className={`text-sm md:text-xl pt-0.5 md:pt-1 group-hover:translate-x-2 transition-transform duration-300 ${
                       theme === 'light' ? 'text-gray-700' : 'text-gray-300'
                     }`}>
                       {feature}
@@ -189,16 +189,16 @@ const MissionAndFeaturesSection = () => {
               </ul>
 
               {/* CTA Button */}
-              <div className="text-center pt-8 border-t border-gray-200 dark:border-gray-700">
+              <div className="text-center pt-6 md:pt-8 border-t border-gray-200 dark:border-gray-700">
                 <button 
                   onClick={handleGetStartedClick}
-                  className="premium-btn-lg group relative overflow-hidden w-full max-w-sm mx-auto focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 py-4 px-8 rounded-2xl font-semibold text-lg"
+                  className="group relative overflow-hidden w-full max-w-sm mx-auto focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 py-3 px-6 md:py-4 md:px-8 rounded-xl md:rounded-2xl font-semibold text-sm md:text-lg"
                   aria-label="Get started with our platform"
                 >
                   <span className="relative z-10">GET STARTED TODAY</span>
                   <div className={`absolute inset-0 bg-gradient-to-r ${ColorPalette.primary.gradient} group-hover:opacity-90 transition-all duration-300`}></div>
                 </button>
-                <p className={`mt-4 text-sm ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
+                <p className={`mt-3 md:mt-4 text-xs md:text-sm ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>
                   Join thousands of satisfied vehicle owners
                 </p>
               </div>

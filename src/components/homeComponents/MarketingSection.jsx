@@ -37,9 +37,9 @@ const MarketingSection = ({ onExploreServicesClick }) => {
       </div>
 
       <div className="max-w-7xl mx-auto relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 lg:gap-16 items-center">
           <div data-aos="fade-right" data-aos-delay="200">
-            <h2 className={`text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight ${
+            <h2 className={`text-2xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6 leading-tight ${
               theme === 'light' 
                 ? 'text-gray-900' 
                 : 'text-white'
@@ -49,38 +49,37 @@ const MarketingSection = ({ onExploreServicesClick }) => {
                 Our Priority
               </span>
             </h2>
-            <p className={`text-base md:text-lg lg:text-xl leading-relaxed mb-6 ${
+            <p className={`text-sm md:text-lg lg:text-xl leading-relaxed mb-6 ${
               theme === 'light' ? 'text-gray-700' : 'text-gray-300'
             }`}>
               Whether you drive a bike, car, or commercial vehicle, we connect you with the best garages in your area. 
               Get transparent pricing, verified mechanics, and quality service for all vehicle types.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
               <button 
                 onClick={handleExploreClick}
-                className="premium-btn-lg group relative overflow-hidden focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                className="group relative overflow-hidden focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 px-6 py-3 md:px-8 md:py-4 rounded-xl font-semibold text-sm md:text-lg text-white transition-all duration-300 transform hover:scale-105 hover:shadow-xl bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800"
                 data-aos="zoom-in"
                 data-aos-delay="400"
                 aria-label="Explore our services"
               >
                 <span className="relative z-10">EXPLORE SERVICES</span>
-                <div className={`absolute inset-0 bg-gradient-to-r ${ColorPalette.primary.hover.gradient} group-hover:${ColorPalette.primary.button.hover.gradient} transition-all duration-300`}></div>
+                <div className="absolute inset-0 bg-gradient-to-r opacity-0 group-hover:opacity-100 transition-all duration-300 from-white/20 to-white/10"></div>
               </button>
               <button 
                 onClick={handleLearnMoreClick}
-                className="premium-outline-btn-lg group relative overflow-hidden focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2"
+                className="group relative overflow-hidden focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 px-6 py-3 md:px-8 md:py-4 rounded-xl font-semibold text-sm md:text-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl border-2 border-cyan-400 text-cyan-400 hover:text-white hover:bg-cyan-400"
                 data-aos="zoom-in"
                 data-aos-delay="500"
                 aria-label="Learn more about our platform"
               >
                 <span className="relative z-10">LEARN MORE</span>
-                <div className="absolute inset-0 border-2 border-cyan-400 rounded-xl group-hover:bg-cyan-400 group-hover:bg-opacity-10 transition-all duration-300"></div>
               </button>
             </div>
           </div>
           
           <div className="relative" data-aos="fade-left" data-aos-delay="300">
-            <div className="relative rounded-3xl overflow-hidden shadow-2xl transform hover:scale-105 transition-transform duration-500">
+            <div className="relative rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl transform hover:scale-105 transition-transform duration-500">
               <img
                 src="https://images.pexels.com/photos/13065690/pexels-photo-13065690.jpeg"
                 alt="Professional garage service with mechanics working on vehicles"

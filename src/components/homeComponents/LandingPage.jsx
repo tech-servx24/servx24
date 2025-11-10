@@ -16,7 +16,7 @@ const LandingPage = forwardRef(({
 }, ref) => {
   useEffect(() => {
     AOS.init({
-      duration: 1000,
+      duration: 600,
       easing: 'ease-in-out-cubic',
       once: true,
       offset: 50,
@@ -34,7 +34,7 @@ const LandingPage = forwardRef(({
       </div>
 
       {/* Banner Carousel */}
-      <section data-aos="fade-in" data-aos-duration="1200">
+      <section data-aos="fade-in" data-aos-duration="800">
         <BannerCarousel 
           banners={banners || []} 
           onFindGaragesClick={onFindGaragesClick}
