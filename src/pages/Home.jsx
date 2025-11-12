@@ -3,6 +3,7 @@ import Header from '../components/homeComponents/Header';
 import LandingPage from '../components/homeComponents/LandingPage';
 import GarageListingPage from '../components/garageComponents/GarageListingPage';
 import GarageDetailPage from '../components/garageComponents/GarageDetailPage';
+import WashingCenterDetail from '../components/washingComponents/WashingCenterDetail';
 import WashingService from '../components/washingComponents/WashingService';
 import EVService from '../components/evComponents/EVService';
 import EmergencyService from '../components/emergencyComponents/EmergencyService';
@@ -211,8 +212,10 @@ const Home = ({ setCurrentPage }) => {
 
   // Handle garage click
   const handleGarageClick = (garage) => {
+    console.log("🔍 handleGarageClick called with garage:", garage);
     setSelectedGarage(garage);
     setShowGarageDetail(true);
+    console.log("🔍 showGarageDetail set to true, showWashingService:", showWashingService);
   };
 
   // Handle vehicle click from buy/sell service
@@ -327,6 +330,65 @@ const Home = ({ setCurrentPage }) => {
               onFindGaragesClick={handleFindGaragesClick}
               onServiceClick={handleServiceClick} 
             />
+        ) : showVehicleDetail && selectedVehicle && isRentVehicleDetail ? (
+          <RentVehicleDetailPage
+            vehicle={selectedVehicle}
+            onClose={closeVehicleDetail}
+            onRentNow={(rentalData) => {
+              alert(`Rent ${rentalData.vehicle.brand} ${rentalData.vehicle.model} for ${rentalData.rentalType.toLowerCase()} rental (${rentalData.startDate} to ${rentalData.endDate}). Total: ₹${rentalData.price.toLocaleString()}. This feature will be implemented soon.`);
+            }}
+          />
+        ) : showVehicleDetail && selectedVehicle ? (
+          <VehicleDetailPage
+            vehicle={selectedVehicle}
+            onClose={closeVehicleDetail}
+            onContactSeller={() => {
+              alert(`Contact seller for ${selectedVehicle.brand} ${selectedVehicle.model}. This feature will be implemented soon.`);
+            }}
+          />
+        ) : showGarageDetail && selectedGarage && showWashingService ? (
+          <WashingCenterDetail
+            center={selectedGarage}
+            onClose={() => {
+              closeGarageDetail();
+              // Keep showWashingService true so we go back to washing service list
+            }}
+            onBookNow={() => {
+              // Check if user is authenticated
+              const token = localStorage.getItem('authToken');
+              
+              if (token) {
+                // User is authenticated, proceed to booking
+                console.log("✅ User is authenticated, proceeding to washing booking");
+                closeGarageDetail();
+                window.location.href = `/washing-booking?washingCenterId=${selectedGarage.id}&returnTo=washing-list&vehicleType=all`;
+              } else {
+                // User not authenticated, show login popup
+                console.log("❌ User not authenticated, showing login popup");
+                setShowLoginPopup(true);
+              }
+            }}
+          />
+        ) : showGarageDetail && selectedGarage ? (
+          <GarageDetailPage
+            garage={selectedGarage}
+            onClose={closeGarageDetail}
+            onBookNow={() => {
+              // Check if user is authenticated
+              const token = localStorage.getItem('authToken');
+              
+              if (token) {
+                // User is authenticated, proceed to booking
+                console.log("✅ User is authenticated, proceeding to booking");
+                closeGarageDetail();
+                window.location.href = `/booking?garageId=${selectedGarage.id}&returnTo=garage-list&vehicleType=${selectedVehicleType}`;
+              } else {
+                // User not authenticated, show login popup
+                console.log("❌ User not authenticated, showing login popup");
+                setShowLoginPopup(true);
+              }
+            }}
+          />
         ) : showWashingService ? (
           <WashingService
             selectedCity={selectedCity}
@@ -359,42 +421,6 @@ const Home = ({ setCurrentPage }) => {
             selectedCity={selectedCity}
             onBackToMain={backToMain}
             onVehicleClick={handleVehicleClick}
-          />
-        ) : showVehicleDetail && selectedVehicle && isRentVehicleDetail ? (
-          <RentVehicleDetailPage
-            vehicle={selectedVehicle}
-            onClose={closeVehicleDetail}
-            onRentNow={(rentalData) => {
-              alert(`Rent ${rentalData.vehicle.brand} ${rentalData.vehicle.model} for ${rentalData.rentalType.toLowerCase()} rental (${rentalData.startDate} to ${rentalData.endDate}). Total: ₹${rentalData.price.toLocaleString()}. This feature will be implemented soon.`);
-            }}
-          />
-        ) : showVehicleDetail && selectedVehicle ? (
-          <VehicleDetailPage
-            vehicle={selectedVehicle}
-            onClose={closeVehicleDetail}
-            onContactSeller={() => {
-              alert(`Contact seller for ${selectedVehicle.brand} ${selectedVehicle.model}. This feature will be implemented soon.`);
-            }}
-          />
-        ) : showGarageDetail && selectedGarage ? (
-          <GarageDetailPage
-            garage={selectedGarage}
-            onClose={closeGarageDetail}
-            onBookNow={() => {
-              // Check if user is authenticated
-              const token = localStorage.getItem('authToken');
-              
-              if (token) {
-                // User is authenticated, proceed to booking
-                console.log("✅ User is authenticated, proceeding to booking");
-                closeGarageDetail();
-                window.location.href = `/booking?garageId=${selectedGarage.id}&returnTo=garage-list&vehicleType=${selectedVehicleType}`;
-              } else {
-                // User not authenticated, show login popup
-                console.log("❌ User not authenticated, showing login popup");
-                setShowLoginPopup(true);
-              }
-            }}
           />
         ) : (
           <GarageListingPage

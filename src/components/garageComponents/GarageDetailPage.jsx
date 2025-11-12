@@ -834,7 +834,7 @@ const GarageDetailPage = ({ garage, onClose, onBookNow }) => {
                               <span className={`text-lg sm:text-xl md:text-2xl font-bold bg-gradient-to-r ${
                                 theme === 'light'
                                   ? 'from-red-600 to-red-700 bg-clip-text text-transparent'
-                                  : 'from-red-400 to-red-500 text-red-400'
+                                  : 'from-red-400 to-red-500 bg-clip-text text-transparent'
                               }`}>₹{item.price}</span>
                             </div>
                           </div>
@@ -906,10 +906,10 @@ const GarageDetailPage = ({ garage, onClose, onBookNow }) => {
                                   <span className={`text-xs sm:text-sm md:text-sm font-medium ${theme === 'light' ? 'text-gray-600' : 'text-gray-400'}`}>Add-on price</span>
                                 </div>
                                 <div className="flex items-baseline space-x-1">
-                                  <span className={`text-lg sm:text-xl md:text-2xl font-bold ${
+                                  <span className={`text-lg sm:text-xl md:text-2xl font-bold bg-gradient-to-r ${
                                     theme === 'light'
-                                      ? 'bg-gradient-to-r from-purple-600 to-purple-700 bg-clip-text text-transparent'
-                                      : 'text-purple-400'
+                                      ? 'from-purple-600 to-purple-700 bg-clip-text text-transparent'
+                                      : 'from-purple-400 to-purple-500 bg-clip-text text-transparent'
                                   }`}>₹{item.price}</span>
                                 </div>
                               </div>

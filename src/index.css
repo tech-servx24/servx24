@@ -1,8 +1,8 @@
+@import 'aos/dist/aos.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import 'aos/dist/aos.css';
 
 @layer components {
   .premium-btn {

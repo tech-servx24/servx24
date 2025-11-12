@@ -120,7 +120,18 @@ const GarageCard = ({ garage, onClick, isExpanded = false, setCurrentPage, onSho
         )}
         
                         <button 
-          onClick={isExpanded ? handleBookNow : undefined}
+          onClick={(e) => {
+            e.stopPropagation(); // Prevent card click event
+            console.log("🔍 View Details button clicked, isExpanded:", isExpanded, "onClick:", !!onClick);
+            if (isExpanded) {
+              handleBookNow(e);
+            } else if (onClick) {
+              console.log("🔍 Calling onClick with garage:", garage);
+              onClick(garage);
+            } else {
+              console.log("⚠️ onClick handler is not provided!");
+            }
+          }}
           className="w-full bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl mt-3"
         >
           {isExpanded ? 'Book Now' : 'View Details'}
